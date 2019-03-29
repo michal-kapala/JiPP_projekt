@@ -1,7 +1,9 @@
 ﻿#include "stdafx.h"
 #include <windows.h>
+#include "resource.h"
 
 MSG message;
+HMENU hMenu;
 
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -17,7 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	mainClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);//TODO
 	mainClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	mainClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	mainClass.lpszMenuName = NULL; //TODO
+	mainClass.lpszMenuName = (LPCWSTR) hMenu;
 	mainClass.lpszClassName = mainClassName;
 	mainClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);//TODO
 
@@ -26,8 +28,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 1;
 	}
 
+	hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(1));//MENU_ID
+
 	HWND mainWnd = CreateWindowEx(WS_EX_CLIENTEDGE, mainClassName, L"Nazwa aplikacji", WS_OVERLAPPEDWINDOW | WS_SIZEBOX,//okno glowne
-		CW_USEDEFAULT, CW_USEDEFAULT, 600, 400, NULL, NULL/*TODO - menu*/, hInstance, NULL);
+		CW_USEDEFAULT, CW_USEDEFAULT, 600, 400, NULL, hMenu, hInstance, NULL);
 	ShowWindow(mainWnd, nCmdShow);
 	UpdateWindow(mainWnd);
 
