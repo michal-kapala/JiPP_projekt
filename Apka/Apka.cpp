@@ -1,10 +1,6 @@
 ﻿#include "stdafx.h"
 #include <windows.h>
-#include "resource.h"
-
-void testMenu(HWND window, LPCWSTR msg){
-	MessageBox(window, msg, L"Ja kurwa nie wiem czemu jestem taki zajebisty", MB_ICONINFORMATION);
-}
+#include "menu.hpp"
 
 MSG message;
 HMENU hMenu;
@@ -27,15 +23,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	mainClass.lpszClassName = mainClassName;
 	mainClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);//TODO
 
-	if (!RegisterClassEx(&mainClass)) {
+	if (!RegisterClassEx(&mainClass)) {//error
 		MessageBox(NULL, L"Window class registration denial", L"Error", MB_ICONEXCLAMATION | MB_OK);
 		return 1;
 	}
 
-	hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(1));//MENU_ID
+	hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(MENU_ID));
 
 	HWND mainWnd = CreateWindowEx(WS_EX_CLIENTEDGE, mainClassName, L"Nazwa aplikacji", WS_OVERLAPPEDWINDOW | WS_SIZEBOX,//okno glowne
 		CW_USEDEFAULT, CW_USEDEFAULT, 600, 400, NULL, hMenu, hInstance, NULL);
+
 	ShowWindow(mainWnd, nCmdShow);
 	UpdateWindow(mainWnd);
 
@@ -50,43 +47,38 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	switch (msg) {
-	case WM_COMMAND: //TODO, wyjątki, jakoś trzeba ogarnąć te identyfikatory z menu.rc
-		if (LOWORD(wParam) == 10){
+	case WM_COMMAND: //TODO, wyjątki, funkcje w menu.hpp
+		switch (LOWORD(wParam)){//menu
+		case MENU_FILE_NEW:
 			testMenu(hwnd, L"Zróbże nowy plik");
-			break;
-		}	
-		if (LOWORD(wParam) == 11){
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		case MENU_FILE_OPEN_VIEW:
 			testMenu(hwnd, L"Otwórzże podgląd pliku źródłowego");
-			break;
-		}
-		if (LOWORD(wParam) == 12) {
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		case MENU_FILE_OPEN_COMPVIEW_LZW:
 			testMenu(hwnd, L"Skompresujże LZW i wyświetl łaskawie");
-			break;
-		}
-		if (LOWORD(wParam) == 13) {
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		case MENU_FILE_OPEN_COMPVIEW_HUFFMAN:
 			testMenu(hwnd, L"Skompresujże Huffmankiem i wyświetl łaskawie");
-			break;
-		}
-		if (LOWORD(wParam) == 14) {
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		case MENU_FILE_EDIT:
 			testMenu(hwnd, L"Masz poczęstuj się edycją");
-			break;
-		}
-		if (LOWORD(wParam) == 15) {
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		case MENU_FILE_COMPRESS_LZW:
 			testMenu(hwnd, L"Skompresujże LZW i eksportuj Bóg zapłać");
-			break;
-		}
-		if (LOWORD(wParam) == 16) {
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		case MENU_FILE_COMPRESS_HUFFMAN:
 			testMenu(hwnd, L"Skompresujże Huffmankiem i eksportuj tak jak Pan Jezus powiedział");
-			break;
-		}
-		if (LOWORD(wParam) == 17) {
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		case MENU_JPEG:
 			testMenu(hwnd, L"HAHA NIE DLA PSA JPEG");
-			break;
-		}
-		if (LOWORD(wParam) == 18) {
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		case MENU_HELP:
 			testMenu(hwnd, L"Nie no żartowałem, masz, poczęstuj się pomocą");
-			break;
-		}//koniec TODO WM_COMMANDA
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		default:
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		}
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
 		break;
