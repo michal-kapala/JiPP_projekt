@@ -50,31 +50,31 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 	case WM_COMMAND: //TODO, wyjątki, funkcje w menu.hpp
 		switch (LOWORD(wParam)){//menu
 		case MENU_FILE_NEW:
-			testMenu(hwnd, L"Zróbże nowy plik");
+			file::menuNewFile(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_OPEN_VIEW:
-			testMenu(hwnd, L"Otwórzże podgląd pliku źródłowego");
+			file::menuOpenView(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_OPEN_COMPVIEW_LZW:
-			testMenu(hwnd, L"Skompresujże LZW i wyświetl łaskawie");
+			file::menuOpenCompViewLZW(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_OPEN_COMPVIEW_HUFFMAN:
-			testMenu(hwnd, L"Skompresujże Huffmankiem i wyświetl łaskawie");
+			file::menuOpenCompViewHuffman(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_EDIT:
-			testMenu(hwnd, L"Masz poczęstuj się edycją");
+			file::menuEdit(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_COMPRESS_LZW:
-			testMenu(hwnd, L"Skompresujże LZW i eksportuj Bóg zapłać");
+			file::menuCompressLZW(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_COMPRESS_HUFFMAN:
-			testMenu(hwnd, L"Skompresujże Huffmankiem i eksportuj tak jak Pan Jezus powiedział");
+			file::menuCompressHuffman(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_JPEG:
-			testMenu(hwnd, L"HAHA NIE DLA PSA JPEG");
+			menuJPEG(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_HELP:
-			testMenu(hwnd, L"Nie no żartowałem, masz, poczęstuj się pomocą");
+			menuHelp(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		default:
 			return DefWindowProc(hwnd, msg, wParam, lParam);

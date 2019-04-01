@@ -11,6 +11,15 @@
 #define MENU_JPEG                       17
 #define MENU_HELP                       18
 
-void testMenu(HWND window, LPCWSTR msg) {
-	MessageBox(window, msg, L"Ja kurwa nie wiem czemu jestem taki zajebisty", MB_ICONINFORMATION);
+namespace file {
+	void menuNewFile(HWND hwnd);
+	void menuOpenView(HWND hwnd);
+	void menuOpenCompViewLZW(HWND hwnd);
+	void menuOpenCompViewHuffman(HWND hwnd);
+	void menuEdit(HWND hwnd);
+	void menuCompressLZW(HWND hwnd);
+	void menuCompressHuffman(HWND hwnd);
 }
+void testMenu(HWND window, LPCWSTR msg);
+void menuJPEG(HWND hwnd);//stwórz okna input/output, okienka na liczby etc. uruchom algorytm i wyœwietl
+void menuHelp(HWND hwnd);//zrób du¿e pole tekstowe, otwórz help.txt i wyœwietl bufor w polu
