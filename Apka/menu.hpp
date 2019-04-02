@@ -9,7 +9,8 @@
 #define MENU_FILE_COMPRESS_LZW          15
 #define MENU_FILE_COMPRESS_HUFFMAN      16
 #define MENU_JPEG                       17
-#define MENU_HELP                       18
+#define MENU_INFO                       18
+#define INFO_ID							L"info.txt"
 
 namespace file {
 	void menuNewFile(HWND hwnd);
@@ -22,4 +23,4 @@ namespace file {
 }
 void testMenu(HWND window, LPCWSTR msg);
 void menuJPEG(HWND hwnd);//stwórz okna input/output, okienka na liczby etc. uruchom algorytm i wyœwietl
-void menuHelp(HWND hwnd);//zrób du¿e pole tekstowe, otwórz help.txt i wyœwietl bufor w polu
+void menuInfo(HWND hTextbox);//unstable af

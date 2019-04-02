@@ -40,6 +40,22 @@ void menuJPEG(HWND hwnd) {
 	testMenu(hwnd, L"HAHA NIE DLA PSA JPEG");
 }
 
-void menuHelp(HWND hwnd) {
-	testMenu(hwnd, L"Nie no ¿artowa³em, masz, poczêstuj siê pomoc¹");
+void menuInfo(HWND hTextbox) {//TODO EOF-read, gdzies jest wyciek pamieci bo sie wypierdala po wielu probach, callback dla textboxa mo¿e pomóc
+	HANDLE hInfo = CreateFile(INFO_ID, GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY, NULL);
+	DWORD dSize = GetFileSize(hInfo, NULL), dRead;
+	LPSTR buffer = (LPSTR)GlobalAlloc(GPTR, dSize + 1);
+	
+	if (!ReadFile(hInfo, buffer, dSize, &dRead, NULL)) {
+		MessageBox(NULL, L"File reading process failed", L"Error", MB_ICONEXCLAMATION);
+		GlobalFree(buffer);
+	}
+	else {
+		buffer += NULL;
+		LPSTR unicoded = (LPSTR)GlobalAlloc(GPTR, dSize + 1);
+		MultiByteToWideChar(CP_ACP, 0, buffer, -1, (LPWSTR)unicoded, dSize + 1);//JEBAC
+		GlobalFree(buffer);
+		SetWindowText(hTextbox, (LPCWSTR)unicoded);
+		GlobalFree(unicoded);
+	}
+	CloseHandle(hInfo);//g00wno niestabilne w hooy ale wyœwietla
 }

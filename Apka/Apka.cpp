@@ -2,6 +2,7 @@
 #include <windows.h>
 #include "menu.hpp"
 
+HWND hTextbox;
 MSG message;
 HMENU hMenu;
 
@@ -27,12 +28,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MessageBox(NULL, L"Window class registration denial", L"Error", MB_ICONEXCLAMATION | MB_OK);
 		return 1;
 	}
-
 	hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(MENU_ID));
 
 	HWND mainWnd = CreateWindowEx(WS_EX_CLIENTEDGE, mainClassName, L"Nazwa aplikacji", WS_OVERLAPPEDWINDOW | WS_SIZEBOX,//okno glowne
 		CW_USEDEFAULT, CW_USEDEFAULT, 600, 400, NULL, hMenu, hInstance, NULL);
 
+	hTextbox = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER |//glowny textbox
+		WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL, -2, -2, 600, 400, mainWnd, NULL, hInstance, NULL);
 	ShowWindow(mainWnd, nCmdShow);
 	UpdateWindow(mainWnd);
 
@@ -73,8 +75,8 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 		case MENU_JPEG:
 			menuJPEG(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
-		case MENU_HELP:
-			menuHelp(hwnd);
+		case MENU_INFO:
+			menuInfo(hTextbox);//nie gwalcimy przycisku bo wyjebie
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		default:
 			return DefWindowProc(hwnd, msg, wParam, lParam);
