@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include <windows.h>
+#include <fstream>
+#include <string>
 #include "menu.hpp"
 //TODO, typy i argumenty do pozmieniania
 void testMenu(HWND window, LPCWSTR msg) {
@@ -40,22 +42,33 @@ void menuJPEG(HWND hwnd) {
 	testMenu(hwnd, L"HAHA NIE DLA PSA JPEG");
 }
 
-void menuInfo(HWND hTextbox) {//TODO EOF-read, gdzies jest wyciek pamieci bo sie wypierdala po wielu probach, callback dla textboxa mo¿e pomóc
-	HANDLE hInfo = CreateFile(INFO_ID, GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY, NULL);
-	DWORD dSize = GetFileSize(hInfo, NULL), dRead;
-	LPSTR buffer = (LPSTR)GlobalAlloc(GPTR, dSize + 1);
-	
-	if (!ReadFile(hInfo, buffer, dSize, &dRead, NULL)) {
-		MessageBox(NULL, L"File reading process failed", L"Error", MB_ICONEXCLAMATION);
-		GlobalFree(buffer);
+std::wstring string_to_wstring(const std::string& s)//konwersja - https://stackoverflow.com/questions/27220/how-to-convert-stdstring-to-lpcwstr-in-c-unicode
+{
+	int len;
+	int slength = (int)s.length() + 1;
+	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+	wchar_t* buf = new wchar_t[len];
+	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+	std::wstring r(buf);
+	delete[] buf;
+	return r;
+}
+
+void menuInfo(HWND hTextbox) {
+	std::ifstream info(INFO_ID);
+	std::string chain, buffer;
+	if (!info)
+		MessageBox(hTextbox, L"File opening failure. Check directory.", L"Error", MB_ICONERROR);
+	else{
+		while (!info.eof()) {
+			std::getline(info, buffer);
+			chain.append(buffer);//string stress test kappa
+			chain += "\r\n";//kiedy siedzisz nad wyswietlaniem enterkow 3h po to zeby uswiadomic sobie ze koniec wiersza w windowsie to nie \n tylko \r\n
+		}
+		
+		std::wstring stemp = string_to_wstring(chain);
+		LPCWSTR result = stemp.c_str();
+		SetWindowText(hTextbox, result);
 	}
-	else {
-		buffer += NULL;
-		LPSTR unicoded = (LPSTR)GlobalAlloc(GPTR, dSize + 1);
-		MultiByteToWideChar(CP_ACP, 0, buffer, -1, (LPWSTR)unicoded, dSize + 1);//JEBAC
-		GlobalFree(buffer);
-		SetWindowText(hTextbox, (LPCWSTR)unicoded);
-		GlobalFree(unicoded);
-	}
-	CloseHandle(hInfo);//g00wno niestabilne w hooy ale wyœwietla
+	info.close();
 }

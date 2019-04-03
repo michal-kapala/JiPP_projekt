@@ -10,7 +10,7 @@
 #define MENU_FILE_COMPRESS_HUFFMAN      16
 #define MENU_JPEG                       17
 #define MENU_INFO                       18
-#define INFO_ID							L"info.txt"
+#define INFO_ID							"info.txt"
 
 namespace file {
 	void menuNewFile(HWND hwnd);
