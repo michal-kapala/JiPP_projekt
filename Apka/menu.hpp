@@ -11,6 +11,7 @@
 #define MENU_JPEG                       17
 #define MENU_INFO                       18
 #define INFO_ID							"info.txt"
+#define BUFFER_MAX_SIZE					3000000//maksymalna liczba znakow dla pliku z menuOpenView
 
 namespace file {
 	void menuNewFile(HWND hwnd);
@@ -23,4 +24,4 @@ namespace file {
 }
 void testMenu(HWND window, LPCWSTR msg);
 void menuJPEG(HWND hwnd);//stwórz okna input/output, okienka na liczby etc. uruchom algorytm i wyœwietl
-void menuInfo(HWND hTextbox);//unstable af
+void menuInfo(HWND hTextbox);
