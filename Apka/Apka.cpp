@@ -2,7 +2,7 @@
 #include <windows.h>
 #include "menu.hpp"
 
-HWND hTextbox;
+HWND mainWnd, hTextbox;
 MSG message;
 HMENU hMenu;
 
@@ -30,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(MENU_ID));
 
-	HWND mainWnd = CreateWindowEx(WS_EX_CLIENTEDGE, mainClassName, L"Nazwa aplikacji", WS_OVERLAPPEDWINDOW | WS_SIZEBOX,//okno glowne
+	mainWnd = CreateWindowEx(WS_EX_CLIENTEDGE, mainClassName, L"Nazwa aplikacji", WS_OVERLAPPEDWINDOW | WS_SIZEBOX,//okno glowne
 		CW_USEDEFAULT, CW_USEDEFAULT, 600, 405, NULL, hMenu, hInstance, NULL);
 
 	hTextbox = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER |//glowny textbox
@@ -55,7 +55,7 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 			file::menuNewFile(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_OPEN_VIEW:
-			file::menuOpenView(hwnd);
+			file::menuOpenView(hTextbox);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_OPEN_COMPVIEW_LZW:
 			file::menuOpenCompViewLZW(hwnd);

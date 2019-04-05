@@ -2,19 +2,47 @@
 #include <windows.h>
 #include <fstream>
 #include <string>
+#include <commdlg.h>
+#include <iostream>
+#include <vector>
 #include "menu.hpp"
 //TODO, typy i argumenty do pozmieniania
 void testMenu(HWND window, LPCWSTR msg) {
 	MessageBox(window, msg, L"Menu test", MB_ICONINFORMATION);
 }
 	
+std::wstring string_to_wstring(const std::string& s)//konwersja - https://stackoverflow.com/questions/27220/how-to-convert-stdstring-to-lpcwstr-in-c-unicode
+{
+	int len;
+	int slength = (int)s.length() + 1;
+	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+	wchar_t* buf = new wchar_t[len];
+	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+	std::wstring r(buf);
+	delete[] buf;
+	return r;
+}
+
 void file::menuNewFile(HWND hwnd) {
 	testMenu(hwnd, L"Zrób¿e nowy plik");
 }
 
 void file::menuOpenView(HWND hwnd)
 {
-	testMenu(hwnd, L"Otwórz¿e podgl¹d pliku Ÿród³owego");
+	//testMenu(hwnd, L"Otwórz¿e podgl¹d pliku Ÿród³owego");
+	OPENFILENAME ofn;
+	char fileName[MAX_PATH] = "";//bufor
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = hwnd;
+	ofn.lpstrFilter = L"Pliki tekstowe \0*.txt\0*.docx\0Wszystkie pliki \0*.*\0";
+	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrFile = (LPWSTR) fileName;
+	ofn.lpstrInitialDir = NULL;
+	ofn.lpstrDefExt = L"txt";
+	ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_EXTENSIONDIFFERENT;
+	GetOpenFileNameW(&ofn);
+	SetWindowText(hwnd, ofn.lpstrFile);
 }
 
 void file::menuOpenCompViewLZW(HWND hwnd) {
@@ -40,18 +68,6 @@ void file::menuCompressHuffman(HWND hwnd) {
 
 void menuJPEG(HWND hwnd) {
 	testMenu(hwnd, L"HAHA NIE DLA PSA JPEG");
-}
-
-std::wstring string_to_wstring(const std::string& s)//konwersja - https://stackoverflow.com/questions/27220/how-to-convert-stdstring-to-lpcwstr-in-c-unicode
-{
-	int len;
-	int slength = (int)s.length() + 1;
-	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-	wchar_t* buf = new wchar_t[len];
-	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-	std::wstring r(buf);
-	delete[] buf;
-	return r;
 }
 
 void menuInfo(HWND hTextbox) {
