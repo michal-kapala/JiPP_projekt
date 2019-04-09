@@ -96,6 +96,7 @@ void menuJPEG(HWND hwnd) {
 }
 
 void menuInfo(HWND hTextbox) {
+	
 	std::ifstream info(INFO_ID);
 	std::string chain, buffer;
 	if (!info)

@@ -35,6 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	hTextbox = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER |//glowny textbox
 		WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL, -2, -2, 584, 350, mainWnd, NULL, hInstance, NULL);
+	
 	ShowWindow(mainWnd, nCmdShow);
 	UpdateWindow(mainWnd);
 
@@ -48,6 +49,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	SetCurrentDirectory(PROJECT_STATIC_DIR);//TOFIX statyczny folder projektu na dynmiczna sciezke
 	switch (msg) {
 	case WM_COMMAND: //TODO, wyjątki, funkcje w menu.hpp
 		switch (LOWORD(wParam)){//menu
