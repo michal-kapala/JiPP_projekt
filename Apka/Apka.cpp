@@ -38,7 +38,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL, -2, -2, 584, 350, mainWnd, NULL, hInstance, NULL);
 
 	defPath = (LPTSTR)GlobalAlloc(GPTR, MAX_PATH);
-	GetCurrentDirectoryW(GPTR, defPath);
+	GetCurrentDirectoryW(MAX_PATH, defPath);
 
 	ShowWindow(mainWnd, nCmdShow);
 	UpdateWindow(mainWnd);
