@@ -11,7 +11,7 @@
 #define MENU_JPEG                       17
 #define MENU_INFO                       18
 #define INFO_ID							"info.txt"
-#define PROJECT_STATIC_DIR				L"C:\\Users\\Michal\\Desktop\\d¿ip d¿ip\\Projekt\\Apka"//TOFIX statyczna sciezka ale chociaz dziala
+#define PROJECT_STATIC_DIR				L"C:\\Users\\Michal\\Desktop\\d¿ip d¿ip\\JiPP_projekt\\Apka"//TOFIX statyczna sciezka ale chociaz dziala
 #define BUFFER_MAX_SIZE					3000000//maksymalna liczba znakow dla pliku z menuOpenView
 
 namespace file {

@@ -25,7 +25,49 @@ std::wstring string_to_wstring(const std::string& s)//konwersja - https://stacko
 }
 
 void file::menuNewFile(HWND hwnd) {
-	testMenu(hwnd, L"Zrób¿e nowy plik");
+	//testMenu(hwnd, L"Zrób¿e nowy plik");
+	SetWindowText(hwnd, L"");
+
+	OPENFILENAME file;//TODO Typ *.txt
+	ZeroMemory(&file, sizeof(file));
+	file.lStructSize = sizeof(file);
+	file.hwndOwner = hwnd;
+	file.lpstrFilter = NULL;
+	char fileBuffer[MAX_PATH] = "";
+	file.lpstrFile = (LPWSTR)fileBuffer;
+	file.nMaxFile = MAX_PATH;
+	file.lpstrInitialDir = NULL;
+	file.lpstrTitle = L"Zapisz jako";
+	file.lpstrDefExt = L"txt";
+	file.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+	
+	if (!GetSaveFileNameW(&file)) {
+		switch (CommDlgExtendedError()) {
+		case 0xFFFF:
+			MessageBox(hwnd, L"DialogBox function failed (check window handle)", L"Error", MB_ICONERROR);
+			break;
+		case 0x0006: 
+			MessageBox(hwnd, L"Specified resource not found", L"Error", MB_ICONERROR);
+			break;
+		case 0x0002:
+			MessageBox(hwnd, L"Initialization failed (insufficient memory)", L"Error", MB_ICONERROR);
+			break;
+		case 0x0007: 
+			MessageBox(hwnd, L"Loading the specified resource failed", L"Error", MB_ICONERROR);
+			break;
+		case 0x0005: 
+			MessageBox(hwnd, L"Loading the specified string failed", L"Error", MB_ICONERROR);
+			break;
+		case 0x0001:
+			MessageBox(hwnd, L"IStructSize member of the common dialog box is invalid", L"Error", MB_ICONERROR);
+			break;
+		default: 
+			MessageBox(hwnd, L"Check MSDN CDERR_ list", L"Error", MB_ICONERROR);
+			break;
+		}
+	}
+	HANDLE hFile = CreateFile((LPCWSTR)file.lpstrFile, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+	CloseHandle(hFile);
 }
 
 void file::menuOpenView(HWND hwnd)
@@ -39,6 +81,7 @@ void file::menuOpenView(HWND hwnd)
 	ofn.nMaxFile = MAX_PATH;
 	ofn.lpstrFile = (LPWSTR) fileName;
 	ofn.lpstrInitialDir = NULL;
+	ofn.lpstrTitle = L"Otwórz";
 	ofn.lpstrDefExt = L"txt";
 	ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_EXTENSIONDIFFERENT;
 	GetOpenFileNameW(&ofn);

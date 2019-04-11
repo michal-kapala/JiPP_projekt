@@ -5,6 +5,7 @@
 HWND mainWnd, hTextbox;
 MSG message;
 HMENU hMenu;
+LPTSTR defPath;// \Projekt_JiPP\Apka\
 
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -35,7 +36,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	hTextbox = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER |//glowny textbox
 		WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL, -2, -2, 584, 350, mainWnd, NULL, hInstance, NULL);
-	
+
+	defPath = (LPTSTR)GlobalAlloc(GPTR, MAX_PATH);
+	GetCurrentDirectoryW(GPTR, defPath);
+
 	ShowWindow(mainWnd, nCmdShow);
 	UpdateWindow(mainWnd);
 
@@ -44,17 +48,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		DispatchMessage(&message);
 	}
 	return message.wParam;
-
+	GlobalFree(defPath);
 	return 0;
 }
 
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	SetCurrentDirectory(PROJECT_STATIC_DIR);//TOFIX statyczny folder projektu na dynmiczna sciezke
+	SetCurrentDirectory(defPath);
 	switch (msg) {
 	case WM_COMMAND: //TODO, wyjątki, funkcje w menu.hpp
 		switch (LOWORD(wParam)){//menu
 		case MENU_FILE_NEW:
-			file::menuNewFile(hwnd);
+			file::menuNewFile(hTextbox);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_OPEN_VIEW:
 			file::menuOpenView(hTextbox);
