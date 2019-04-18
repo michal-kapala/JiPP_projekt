@@ -25,9 +25,6 @@ std::wstring string_to_wstring(const std::string& s)//konwersja - https://stacko
 }
 
 void file::menuNewFile(HWND hwnd) {
-	//testMenu(hwnd, L"Zrób¿e nowy plik");
-	SetWindowText(hwnd, L"");
-
 	OPENFILENAME file;//TODO Typ *.txt
 	ZeroMemory(&file, sizeof(file));
 	file.lStructSize = sizeof(file);
@@ -66,8 +63,14 @@ void file::menuNewFile(HWND hwnd) {
 			break;
 		}
 	}
-	HANDLE hFile = CreateFile((LPCWSTR)file.lpstrFile, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = CreateFile((LPCWSTR)file.lpstrFile, FILE_SHARE_WRITE, NULL, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	DWORD textboxContentSize = 2 * GetWindowTextLength(hwnd), savedChars;//TOFIX 2 razy wiekszy plik
+	LPWSTR textboxContent =(LPWSTR) GlobalAlloc(GPTR, textboxContentSize);
+	GetWindowText(hwnd, textboxContent, textboxContentSize);
+	if (!WriteFile(hFile, textboxContent, textboxContentSize, &savedChars, NULL))
+		MessageBox(hwnd, L"Couldn't save file", L"Error", MB_ICONERROR);
 	CloseHandle(hFile);
+	GlobalFree(textboxContent);
 }
 
 void file::menuOpenView(HWND hwnd)
@@ -93,17 +96,17 @@ void file::menuOpenView(HWND hwnd)
 	if (hFile == INVALID_HANDLE_VALUE)
 		MessageBox(hwnd, L"File opening failure", L"Error", MB_ICONERROR);
 	else {
-			dwSize = GetFileSize(hFile, NULL);
+			dwSize = 2 * GetFileSize(hFile, NULL);
 		if (dwSize == 0xFFFFFFFF)
 			MessageBox(hwnd, L"File size extending 4GB", L"Error", MB_ICONERROR);
 		else {
-			buff =(LPSTR) GlobalAlloc(GPTR, dwSize +1);
+			buff =(LPSTR) GlobalAlloc(GPTR, dwSize);
 			if (!ReadFile(hFile, buff, dwSize, &dwTmpBuff, NULL))//TOFIX czasem ucina niezaleznie od rozmiaru pliku, a czasem wyswietla cale 470KB tekstu, ale stabilne toto
 				MessageBox(hwnd, L"File reading failure", L"Error", MB_ICONERROR);
 			else {
-				unicoded = (LPSTR)GlobalAlloc(GPTR, BUFFER_MAX_SIZE+1);
-				MultiByteToWideChar(CP_ACP, 0, buff, -1, (LPWSTR)unicoded, BUFFER_MAX_SIZE+1);
-				unicoded[dwSize] = 0;
+				unicoded = (LPSTR)GlobalAlloc(GPTR, dwSize);
+				MultiByteToWideChar(CP_ACP, 0, buff, -1, (LPWSTR)unicoded, dwSize);
+				unicoded[dwSize-1] = 0;
 				SetWindowText(hwnd,(LPCWSTR) unicoded);
 				GlobalFree(unicoded);
 			}
