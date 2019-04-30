@@ -24,12 +24,12 @@ std::wstring string_to_wstring(const std::string& s)//konwersja - https://stacko
 	return r;
 }
 
-void file::menuNewFile(HWND hwnd) {
+void file::menuSaveFile(HWND hwnd) {
 	OPENFILENAME file;//TODO Typ *.txt
 	ZeroMemory(&file, sizeof(file));
 	file.lStructSize = sizeof(file);
 	file.hwndOwner = hwnd;
-	file.lpstrFilter = NULL;
+	file.lpstrFilter = L"Pliki tekstowe \0*.txt\0Wszystkie pliki \0*.*\0";
 	char fileBuffer[MAX_PATH] = "";
 	file.lpstrFile = (LPWSTR)fileBuffer;
 	file.nMaxFile = MAX_PATH;
@@ -73,7 +73,7 @@ void file::menuNewFile(HWND hwnd) {
 	GlobalFree(textboxContent);
 }
 
-void file::menuOpenView(HWND hwnd)
+void file::menuOpen(HWND hwnd)
 {
 	OPENFILENAME ofn;
 	char fileName[MAX_PATH] = "";
@@ -114,19 +114,6 @@ void file::menuOpenView(HWND hwnd)
 			CloseHandle(hFile);
 		}		
 	}	
-}
-
-void file::menuOpenCompViewLZW(HWND hwnd) {
-	testMenu(hwnd, L"Skompresuj¿e LZW i wyœwietl ³askawie");
-}
-
-void file::menuOpenCompViewHuffman(HWND hwnd)
-{
-	testMenu(hwnd, L"Skompresuj¿e Huffmankiem i wyœwietl ³askawie");
-}
-
-void file::menuEdit(HWND hwnd) {
-	testMenu(hwnd, L"Masz poczêstuj siê edycj¹");
 }
 
 void file::menuCompressLZW(HWND hwnd) {

@@ -57,20 +57,11 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 	switch (msg) {
 	case WM_COMMAND: //TODO, wyjątki, funkcje w menu.hpp
 		switch (LOWORD(wParam)){//menu
-		case MENU_FILE_NEW:
-			file::menuNewFile(hTextbox);
+		case MENU_FILE_SAVE:
+			file::menuSaveFile(hTextbox);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
-		case MENU_FILE_OPEN_VIEW:
-			file::menuOpenView(hTextbox);
-			return DefWindowProc(hwnd, msg, wParam, lParam);
-		case MENU_FILE_OPEN_COMPVIEW_LZW:
-			file::menuOpenCompViewLZW(hwnd);
-			return DefWindowProc(hwnd, msg, wParam, lParam);
-		case MENU_FILE_OPEN_COMPVIEW_HUFFMAN:
-			file::menuOpenCompViewHuffman(hwnd);
-			return DefWindowProc(hwnd, msg, wParam, lParam);
-		case MENU_FILE_EDIT:
-			file::menuEdit(hwnd);
+		case MENU_FILE_OPEN:
+			file::menuOpen(hTextbox);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_COMPRESS_LZW:
 			file::menuCompressLZW(hwnd);
@@ -90,11 +81,9 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
 		break;
-
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
-
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
