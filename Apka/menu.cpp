@@ -124,8 +124,8 @@ void file::menuCompressHuffman(HWND hwnd) {
 	testMenu(hwnd, L"Skompresuj¿e Huffmankiem i eksportuj tak jak Pan Jezus powiedzia³");
 }
 
-void menuJPEG(HWND hwnd) {
-	testMenu(hwnd, L"HAHA NIE DLA PSA JPEG");
+void menuJPEG(HWND hwnd, LPCWSTR wndClassName) {
+	//testMenu(hwnd, L"HAHA NIE DLA PSA JPEG");
 }
 
 void menuInfo(HWND hTextbox) {
@@ -146,4 +146,10 @@ void menuInfo(HWND hTextbox) {
 		SetWindowText(hTextbox, result);
 	}
 	info.close();
+}
+
+void clearTextbox(HWND hTextbox)
+{
+	ShowWindow(hTextbox, SW_SHOW);
+	SetWindowText(hTextbox, L"");
 }

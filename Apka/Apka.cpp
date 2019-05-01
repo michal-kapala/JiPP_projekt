@@ -8,6 +8,7 @@ HMENU hMenu;
 LPTSTR defPath;// \Projekt_JiPP\Apka\
 
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) { //main
 	WNDCLASSEX mainClass;//klasa okna
@@ -20,7 +21,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	mainClass.hInstance = hInstance;
 	mainClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);//TODO
 	mainClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	mainClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	mainClass.hbrBackground = (HBRUSH)( COLOR_WINDOW + 1);
 	mainClass.lpszMenuName = (LPCWSTR) hMenu;
 	mainClass.lpszClassName = mainClassName;
 	mainClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);//TODO
@@ -33,6 +34,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	mainWnd = CreateWindowEx(WS_EX_CLIENTEDGE, mainClassName, L"Nazwa aplikacji", WS_OVERLAPPEDWINDOW | WS_SIZEBOX,//okno glowne
 		CW_USEDEFAULT, CW_USEDEFAULT, 600, 405, NULL, hMenu, hInstance, NULL);
+
+	HBRUSH brush = CreateSolidBrush(RGB(170, 210, 255));//niebieski
+	SetClassLongPtr(mainWnd, GCLP_HBRBACKGROUND, (LONG)brush);
 
 	hTextbox = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER |//glowny textbox
 		WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL, -2, -2, 584, 350, mainWnd, NULL, hInstance, NULL);
@@ -61,19 +65,25 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 			file::menuSaveFile(hTextbox);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_OPEN:
+			clearTextbox(hTextbox);
 			file::menuOpen(hTextbox);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_COMPRESS_LZW:
+			ShowWindow(hTextbox, SW_SHOW);
 			file::menuCompressLZW(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_COMPRESS_HUFFMAN:
+			ShowWindow(hTextbox, SW_SHOW);
 			file::menuCompressHuffman(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
-		case MENU_JPEG:
-			menuJPEG(hwnd);
+		case MENU_JPEG://!!!!!!!!!!!!!!11111111111!!!!!!!!!11!!!1!!1!1111111111111!!11!!!!111!1!!!!!!!!!!!!!1111!11111!!!111!!!!!1!1!!!!
+			ShowWindow(hTextbox, SW_HIDE);
+			if (DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(DIALOG_TITLE), hwnd, (DLGPROC)jpegDlgProc) == DIALOG_COMPRESS)
+				MessageBox(hwnd, L"Skompresowałby", L"yasss", MB_ICONINFORMATION);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
-		case MENU_INFO:
-			menuInfo(hTextbox);//dziala
+		case MENU_INFO:	
+			clearTextbox(hTextbox);
+			menuInfo(hTextbox);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		default:
 			return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -89,4 +99,29 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 	}
 
 	return 0;
+}
+
+BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+	switch (Msg)
+	{
+	case WM_COMMAND:
+	{
+		// reakcja na przyciski
+		switch (LOWORD(wParam))
+		{
+		case DIALOG_COMPRESS:
+			EndDialog(hwnd, DIALOG_COMPRESS);
+			break;
+		case WM_DESTROY:
+			EndDialog(hwnd, DIALOG_COMPRESS);
+			break;
+		}
+	}
+	break;
+
+	default: return FALSE;
+	}
+
+	return TRUE;
 }
