@@ -1,12 +1,56 @@
 ﻿#include "stdafx.h"
 #include <windows.h>
+#include <fstream>
+#include <vector>
 #include "menu.hpp"
+#include "my_huff.hpp"
+#include <cstdlib>
+#include <ctime>
 
 HWND mainWnd, hTextbox;
 MSG message;
 HMENU hMenu;
 LPTSTR defPath;// \Projekt_JiPP\Apka\
 
+void rysuj_8x8(HWND hwnd)//8x8
+{
+	HDC hdcOkno = GetDC(hwnd);
+	
+	int x, y;
+	//std::vector<std::vector<int>> matrix;
+	srand(time(0));
+	int random;//jasnosc
+	for (x=120; x < 440; x += 40) {
+		//std::vector<int> tmp;
+		for (y=80; y < 400; y += 40)
+		{
+			HBRUSH PedzelZiel, Pudelko;
+			HPEN OlowekCzerw, Piornik;
+			random = rand() % 256;
+			PedzelZiel = CreateSolidBrush(RGB(random, random, random));
+			OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);//psychodela
+			Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
+			Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
+			Rectangle(hdcOkno, x, y, 40+x, 40+y);
+			SelectObject(hdcOkno, Pudelko);
+			SelectObject(hdcOkno, Piornik);
+			//tmp.push_back(random);
+			/*for (int i = 0; i < 8; i++)
+			{
+				std::vector<int> tmp;
+				for (int j = 10; j < 18; j++)
+				{
+					tmp.push_back(j + i * 2);//wstaw random
+				}
+				tab.push_back(tmp);
+			}*/
+			DeleteObject(OlowekCzerw);
+			DeleteObject(PedzelZiel);
+		}
+		//matrix.push_back(tmp);
+	}
+	ReleaseDC(hwnd, hdcOkno);
+}
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
@@ -78,8 +122,7 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_JPEG://!!!!!!!!!!!!!!11111111111!!!!!!!!!11!!!1!!1!1111111111111!!11!!!!111!1!!!!!!!!!!!!!1111!11111!!!111!!!!!1!1!!!!
 			ShowWindow(hTextbox, SW_HIDE);
-			if (DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(DIALOG_TITLE), hwnd, (DLGPROC)jpegDlgProc) == DIALOG_COMPRESS)
-				MessageBox(hwnd, L"Skompresowałby", L"yasss", MB_ICONINFORMATION);
+			DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(DIALOG_TITLE), hwnd, (DLGPROC)jpegDlgProc);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_INFO:	
 			clearTextbox(hTextbox);
@@ -111,7 +154,7 @@ BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		switch (LOWORD(wParam))
 		{
 		case DIALOG_COMPRESS:
-			EndDialog(hwnd, DIALOG_COMPRESS);
+			rysuj_8x8(hwnd);
 			break;
 		case WM_DESTROY:
 			EndDialog(hwnd, DIALOG_COMPRESS);

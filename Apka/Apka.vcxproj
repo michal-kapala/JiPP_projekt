@@ -151,9 +151,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\resource.h" />
     <ClInclude Include="Huffman.h" />
     <ClInclude Include="menu.hpp" />
+    <ClInclude Include="my_huff.hpp" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -161,6 +162,7 @@
     <ClCompile Include="Apka.cpp" />
     <ClCompile Include="Huffman.cpp" />
     <ClCompile Include="menu.cpp" />
+    <ClCompile Include="my_huff.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
