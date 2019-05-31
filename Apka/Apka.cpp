@@ -15,17 +15,17 @@ LPTSTR defPath;// \Projekt_JiPP\Apka\
 void rysuj_8x8(HWND hwnd)//8x8
 {
 	HDC hdcOkno = GetDC(hwnd);
-	
+	HBRUSH PedzelZiel, Pudelko;
+	HPEN OlowekCzerw, Piornik;
+
 	int x, y;
-	//std::vector<std::vector<int>> matrix;
+	std::vector<std::vector<int>> matrix;
 	srand(time(0));
 	int random;//jasnosc
-	for (x=120; x < 440; x += 40) {
-		//std::vector<int> tmp;
-		for (y=80; y < 400; y += 40)
+	for (x=120; x < 440; x += 40) {//kolumny
+		std::vector<int> tmp;
+		for (y=80; y < 400; y += 40)//wiersze
 		{
-			HBRUSH PedzelZiel, Pudelko;
-			HPEN OlowekCzerw, Piornik;
 			random = rand() % 256;
 			PedzelZiel = CreateSolidBrush(RGB(random, random, random));
 			OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);//psychodela
@@ -34,21 +34,81 @@ void rysuj_8x8(HWND hwnd)//8x8
 			Rectangle(hdcOkno, x, y, 40+x, 40+y);
 			SelectObject(hdcOkno, Pudelko);
 			SelectObject(hdcOkno, Piornik);
-			//tmp.push_back(random);
-			/*for (int i = 0; i < 8; i++)
-			{
-				std::vector<int> tmp;
-				for (int j = 10; j < 18; j++)
-				{
-					tmp.push_back(j + i * 2);//wstaw random
-				}
-				tab.push_back(tmp);
-			}*/
+			tmp.push_back(random);
+			
 			DeleteObject(OlowekCzerw);
 			DeleteObject(PedzelZiel);
 		}
-		//matrix.push_back(tmp);
+		matrix.push_back(tmp);
 	}
+
+
+	switch (matrix.size())
+	{
+	case 7: 
+		PedzelZiel = CreateSolidBrush(RGB(200, 20, 0));//czerwony
+		OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);
+		Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
+		Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
+		Rectangle(hdcOkno, 0, 0, 40, 40);
+		SelectObject(hdcOkno, Pudelko);
+		SelectObject(hdcOkno, Piornik);
+		break;
+	case 8:
+		PedzelZiel = CreateSolidBrush(RGB(20, 200, 0));//zielony
+		OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);
+		Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
+		Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
+		Rectangle(hdcOkno, 0, 0, 40, 40);
+		SelectObject(hdcOkno, Pudelko);
+		SelectObject(hdcOkno, Piornik);
+		break;
+	case 9:
+		PedzelZiel = CreateSolidBrush(RGB(0, 20, 200));//niebieski
+		OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);
+		Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
+		Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
+		Rectangle(hdcOkno, 0, 0, 40, 40);
+		SelectObject(hdcOkno, Pudelko);
+		SelectObject(hdcOkno, Piornik);
+		break;
+	default:
+		PedzelZiel = CreateSolidBrush(RGB(200, 20, 200));//fioletowy
+		OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);
+		Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
+		Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
+		Rectangle(hdcOkno, 0, 0, 40, 40);
+		SelectObject(hdcOkno, Pudelko);
+		SelectObject(hdcOkno, Piornik);
+		break;
+	}
+
+	int index_x = 0, index_y = 0;
+	for (x = 680; x < 1000; x+=40) {//kolumny
+		for (y = 80 ; y < 400; y+=40)//wiersze
+		{
+			PedzelZiel = CreateSolidBrush(RGB(matrix[index_x][index_y], matrix[index_x][index_y], matrix[index_x][index_y]));
+			OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);//psychodela
+			Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
+			Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
+			Rectangle(hdcOkno, x, y, 40 + x, 40 + y);
+			SelectObject(hdcOkno, Pudelko);
+			SelectObject(hdcOkno, Piornik);
+
+			DeleteObject(OlowekCzerw);
+			DeleteObject(PedzelZiel);
+			++index_y;
+		}
+		++index_x;
+		index_y = 0;
+	}
+	//DCT
+	/*for (index_x=0;index_x<8;index_x++) {
+		for (index_y = 0; index_y < 8; y++) {
+			matrix[x][y] -= 128;
+		}
+	}*/
+
 	ReleaseDC(hwnd, hdcOkno);
 }
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
