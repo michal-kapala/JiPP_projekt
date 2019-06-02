@@ -9,6 +9,7 @@
 #define MENU_INFO                       15
 #define DIALOG_TITLE					16
 #define DIALOG_COMPRESS					17
+#define POGGERS							20
 #define INFO_ID							"info.txt"
 #define PROJECT_STATIC_DIR				L"C:\\Users\\Michal\\Desktop\\d¿ip d¿ip\\JiPP_projekt\\Apka"//TOFIX statyczna sciezka ale chociaz dziala
 #define BUFFER_MAX_SIZE					3000000//maksymalna liczba znakow dla pliku z menuOpenView

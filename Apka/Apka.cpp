@@ -27,12 +27,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	mainClass.cbClsExtra = 0;
 	mainClass.cbWndExtra = 0;
 	mainClass.hInstance = hInstance;
-	mainClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);//TODO
-	mainClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	mainClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(POGGERS));
+	mainClass.hCursor = LoadCursorFromFile(L"cursor.cur");
 	mainClass.hbrBackground = (HBRUSH)( COLOR_WINDOW + 1);
 	mainClass.lpszMenuName = (LPCWSTR) hMenu;
 	mainClass.lpszClassName = mainClassName;
-	mainClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);//TODO
+	mainClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(POGGERS));
 
 	if (!RegisterClassEx(&mainClass)) {//error
 		MessageBox(NULL, L"Window class registration denial", L"Error", MB_ICONEXCLAMATION | MB_OK);
@@ -40,7 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(MENU_ID));
 
-	mainWnd = CreateWindowEx(WS_EX_CLIENTEDGE, mainClassName, L"Nazwa aplikacji", WS_OVERLAPPEDWINDOW | WS_SIZEBOX,//okno glowne
+	mainWnd = CreateWindowEx(WS_EX_CLIENTEDGE, mainClassName, L"Expression: vector subscript out of range", WS_OVERLAPPEDWINDOW | WS_SIZEBOX,//okno glowne
 		CW_USEDEFAULT, CW_USEDEFAULT, 600, 405, NULL, hMenu, hInstance, NULL);
 
 	HBRUSH brush = CreateSolidBrush(RGB(170, 210, 255));//niebieski
@@ -85,7 +85,6 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 			file::menuCompressHuffman(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_JPEG://!!!!!!!!!!!!!!11111111111!!!!!!!!!11!!!1!!1!1111111111111!!11!!!!111!1!!!!!!!!!!!!!1111!11111!!!111!!!!!1!1!!!!
-			ShowWindow(hTextbox, SW_HIDE);
 			DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(DIALOG_TITLE), hwnd, (DLGPROC)jpegDlgProc);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_INFO:	

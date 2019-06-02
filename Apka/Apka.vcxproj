@@ -151,7 +151,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Huffman.h" />
     <ClInclude Include="JPEG.hpp" />
     <ClInclude Include="menu.hpp" />
     <ClInclude Include="my_huff.hpp" />
@@ -161,7 +160,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Apka.cpp" />
-    <ClCompile Include="Huffman.cpp" />
     <ClCompile Include="JPEG.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="my_huff.cpp" />
@@ -174,6 +172,12 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="menu.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cursor.cur" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

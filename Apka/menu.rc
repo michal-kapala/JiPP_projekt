@@ -7,6 +7,8 @@
 #define MENU_INFO 15
 #define DIALOG_TITLE 16
 #define DIALOG_COMPRESS 17
+#define POGGERS 20
+
 #include <windows.h>
 
 MENU_ID MENU
@@ -31,3 +33,5 @@ CAPTION "KOMPRESJA JPEG 8x8"
 {
 	PUSHBUTTON "Losuj", DIALOG_COMPRESS, 280, 300, 40, 20
 }
+
+POGGERS ICON "icon.ico"

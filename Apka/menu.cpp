@@ -14,7 +14,7 @@ void testMenu(HWND window, LPCWSTR msg) {
 	MessageBox(window, msg, L"Menu test", MB_ICONINFORMATION);
 }
 	
-std::wstring string_to_wstring(const std::string& s)//konwersja - https://stackoverflow.com/questions/27220/how-to-convert-stdstring-to-lpcwstr-in-c-unicode
+std::wstring string_to_wstring(const std::string& s)
 {
 	int len;
 	int slength = (int)s.length() + 1;

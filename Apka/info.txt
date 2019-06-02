@@ -2,6 +2,13 @@ Apka © 2019 Micha³ Kapa³a & Jcob Chodubski
 --------------------------------
 Projekt JiPP
 --------------------------------
+Linki do materia³ów i algorytmów, z których korzystaliœmy:
+Algorytm kompresji JPEG - https://www.youtube.com/watch?v=Q2aEzeMDHMA
+DCT - https://www.geeksforgeeks.org/discrete-cosine-transform-algorithm-program/
+Podstawowy kurs Windows API - http://cpp0x.pl/kursy/Kurs-WinAPI-C++/167
+Konwersja wstring - https://stackoverflow.com/questions/27220/how-to-convert-stdstring-to-lpcwstr-in-c-unicode
+--------------------------------
+
 [A lane by the wall of Capulet's orchard. Enter Romeo]
 Romeo
 Can I go forward when my heart is here?
