@@ -7,6 +7,7 @@
 #include <vector>
 #include <cctype>
 #include "menu.hpp"
+#include "my_huff.hpp"
 
 //TODO, typy i argumenty do pozmieniania
 void testMenu(HWND window, LPCWSTR msg) {
@@ -269,7 +270,25 @@ void file::menuCompressLZW(HWND hwnd) {
 }
 
 void file::menuCompressHuffman(HWND hwnd) {
-	testMenu(hwnd, L"Skompresuj¿e Huffmankiem i eksportuj tak jak Pan Jezus powiedzia³");
+	OPENFILENAME ofn;
+	char fileName[MAX_PATH] = "";
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = hwnd;
+	ofn.lpstrFilter = L"Pliki tekstowe \0*.txt\0Wszystkie pliki \0*.*\0";
+	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrFile = (LPWSTR)fileName;
+	ofn.lpstrInitialDir = NULL;
+	ofn.lpstrTitle = L"Kompresuj";
+	ofn.lpstrDefExt = L"txt";
+	ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_EXTENSIONDIFFERENT;
+	GetOpenFileNameW(&ofn);
+	std::ifstream file(ofn.lpstrFile);
+	std::fstream res("kompresja_huff_wynik.txt");
+	huffman_comp huff;
+	huff.compress(file, res);
+	res.close();
+	file.close();
 }
 
 void menuJPEG(HWND hwnd, LPCWSTR wndClassName) {
