@@ -302,7 +302,7 @@ void rysuj_8x8(HWND hwnd){//8x8
 	tmp_file.close();
 
 	log << "Wynik kompresji:\n";//ogólny output
-	std::ifstream source("test.txt");//inty ujemne/dodatnie po spacji
+	std::ifstream source("vector_source.txt");//inty ujemne/dodatnie po spacji
 	std::ofstream comp_output("comp_output.txt");//plik na krzaczory
 	std::ofstream decomp_output("decomp_output.txt");//plik na zdekompresowane inty
 	
