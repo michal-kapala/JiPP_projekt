@@ -80,6 +80,30 @@ std::vector<std::vector<double>> DCT(const std::vector<std::vector<int>> &input)
 	return output;
 }
 
+std::vector<std::vector<int>> IDCT(const std::vector<std::vector<double>> &input) {
+	std::vector<std::vector<int>>output;
+	std::vector<int>line;
+	const double pi = 3.14159;
+	double sum=0, x_factor, y_factor, component2;
+
+	for (int x = 0; x < 8; x++){
+		for (int y = 0; y < 8; y++) {
+			sum = 0;
+			for (int xx = 0; xx < 8; xx++) {
+				for (int yy = 0; yy < 8; yy++) {
+					component2 = input[xx][yy] * cos((2 * x + 1) * xx * pi / 16) * cos((2 * y + 1) * yy * pi / 16) * ((!xx) ? 1 / sqrt(2) : 1.) * ((!yy) ? 1 / sqrt(2) : 1.);
+					sum += component2;
+				}
+			}
+			line.push_back(sum/4);
+		}
+		output.push_back(line);
+		line.clear();
+	}
+
+	return output;
+}
+
 std::vector<double> zigzag(const std::vector<std::vector<double>>&matrix){
 	std::vector<double>out;
 
@@ -89,7 +113,6 @@ std::vector<double> zigzag(const std::vector<std::vector<double>>&matrix){
 
 	while (pos.x <= 7 && pos.y <= 7){
 		out.push_back(matrix[pos.x][pos.y]);
-		//cout << pos.x << " " << pos.y << endl;
 		if (pos.x == 7 && pos.y == 7)
 			break;
 		if (!pos.x && pos.y == 7){//lewy dolny naroznik
@@ -146,14 +169,84 @@ std::vector<double> zigzag(const std::vector<std::vector<double>>&matrix){
 	return out;
 }
 
-void rysuj_8x8(HWND hwnd){//8x8
+std::vector<std::vector<double>> zigzag_matrix(const std::vector<double>&vec) {
+	std::vector<std::vector<double>>out;
+	std::vector<double>init{ 0, 0, 0, 0, 0, 0, 0, 0 };
+	for (int i = 0; i < 8; i++)
+		out.push_back(init);
+	int index = 0;
+	out[0][0] = vec[index];//lewy gorny naroznik
+	index++;
+	position pos(1, 0);
+	bool up_slant = false;
+
+	while (pos.x <= 7 && pos.y <= 7) {
+		out[pos.y][pos.x] = vec[index];
+		if (pos.x == 7 && pos.y == 7)
+			break;
+		index++;
+		if (!pos.x && pos.y == 7) {//lewy dolny naroznik
+			pos.set_pos(1, 0);//w prawo
+			up_slant = true;
+			continue;
+		}
+
+		else if (pos.x == 7 && !pos.y) {//prawy gorny naroznik
+			pos.set_pos(-1, 1);//w dolny skos
+			up_slant = false;
+			continue;
+		}
+
+		else if (!pos.x) {//lewa krawedz
+			if (pos.y % 2)
+				pos.set_pos(0, 1);//w dol
+			else
+				pos.set_pos(1, -1);//w gorny skos
+
+			up_slant = true;
+		}
+		else if (pos.x == 7) {//prawa krawedz
+			if (pos.y % 2)
+				pos.set_pos(0, 1);//w dol
+			else
+				pos.set_pos(-1, 1);//w dolny skos
+
+			up_slant = false;
+		}
+		else if (!pos.y) {//gorna krawedz
+			if (pos.x % 2)
+				pos.set_pos(-1, 1);//w dolny skos
+			else
+				pos.set_pos(1, 0);//w prawo
+
+			up_slant = false;
+		}
+		else if (pos.y == 7) {//dolna krawedz
+			if (pos.x % 2)
+				pos.set_pos(1, -1);//w gorny skos
+			else
+				pos.set_pos(1, 0);//w prawo
+
+			up_slant = true;
+		}
+		else {//srodek tablicy - poruszamy sie po skosie
+			if (up_slant)//w gore
+				pos.set_pos(1, -1);
+			else//albo w dol
+				pos.set_pos(-1, 1);
+		}
+	}
+	return out;
+}
+
+void rysuj_przyklad(HWND hwnd){//8x8
 	HDC hdcOkno = GetDC(hwnd);
-	HBRUSH PedzelZiel, Pudelko;
-	HPEN OlowekCzerw, Piornik;
-	std::ofstream log("jpeg_log.txt");
+	HBRUSH brush, brush_box;
+	HPEN pen, pen_box;
+	std::ofstream log("jpeg_log_ex.txt");
 	int x, y;
-	std::vector<std::vector<int>> matrix;
-	int luminosity, index_x = 0, index_y = 0;
+
+	int  index_x = 0, index_y = 0;
 	std::vector<std::vector<int>> exemplary_image;//obrocony o 90 stopni
 	std::vector<int>v1{ 62, 62, 61, 63, 67, 82, 96, 109 };
 	std::vector<int>v2{ 55, 57, 60, 61, 67, 95, 111, 121 };
@@ -172,105 +265,178 @@ void rysuj_8x8(HWND hwnd){//8x8
 	exemplary_image.push_back(v7);
 	exemplary_image.push_back(v8);
 
-	srand(time(0));
-	for (x = 160; x < 480; x += 40) {//kolumny
-		std::vector<int> tmp;
-		for (y = 480; y < 800; y += 40){//wiersze
-			luminosity = randomInt(78, 178);//zmniejszenie kontrastow
-			PedzelZiel = CreateSolidBrush(RGB(luminosity, luminosity, luminosity));
-			OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);//psychodela
-			Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
-			Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
-			Rectangle(hdcOkno, x, y, 40 + x, 40 + y);
-			SelectObject(hdcOkno, Pudelko);
-			SelectObject(hdcOkno, Piornik);
-			tmp.push_back(luminosity);
-
-			DeleteObject(OlowekCzerw);
-			DeleteObject(PedzelZiel);
-		}
-		matrix.push_back(tmp);
-	}
-
-	switch (matrix.size())
-	{
-	case 7:
-		PedzelZiel = CreateSolidBrush(RGB(200, 20, 0));//czerwony
-		OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);
-		Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
-		Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
-		Rectangle(hdcOkno, 0, 0, 40, 40);
-		SelectObject(hdcOkno, Pudelko);
-		SelectObject(hdcOkno, Piornik);
-		break;
-	case 8:
-		PedzelZiel = CreateSolidBrush(RGB(20, 200, 0));//zielony
-		OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);
-		Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
-		Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
-		Rectangle(hdcOkno, 0, 0, 40, 40);
-		SelectObject(hdcOkno, Pudelko);
-		SelectObject(hdcOkno, Piornik);
-		break;
-	case 9:
-		PedzelZiel = CreateSolidBrush(RGB(0, 20, 200));//niebieski
-		OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);
-		Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
-		Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
-		Rectangle(hdcOkno, 0, 0, 40, 40);
-		SelectObject(hdcOkno, Pudelko);
-		SelectObject(hdcOkno, Piornik);
-		break;
-	default:
-		PedzelZiel = CreateSolidBrush(RGB(200, 20, 200));//fioletowy
-		OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);
-		Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
-		Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
-		Rectangle(hdcOkno, 0, 0, 40, 40);
-		SelectObject(hdcOkno, Pudelko);
-		SelectObject(hdcOkno, Piornik);
-		break;
-	}
 	//przykladowy blok
 	index_x = index_y = 0;
 	for (x = 160; x < 480; x += 40) {//kolumny
-		for (y = 80; y < 400; y += 40){//wiersze
-			PedzelZiel = CreateSolidBrush(RGB(exemplary_image[index_x][index_y], exemplary_image[index_x][index_y], exemplary_image[index_x][index_y]));
-			OlowekCzerw = CreatePen(PS_DOT, 1, 0x0000FF);//psychodela
-			Pudelko = (HBRUSH)SelectObject(hdcOkno, PedzelZiel);
-			Piornik = (HPEN)SelectObject(hdcOkno, OlowekCzerw);
+		for (y = 40; y < 360; y += 40){//wiersze
+			brush = CreateSolidBrush(RGB(exemplary_image[index_x][index_y], exemplary_image[index_x][index_y], exemplary_image[index_x][index_y]));
+			pen = CreatePen(PS_DOT, 1, 0x0000FF);//psychodela
+			brush_box = (HBRUSH)SelectObject(hdcOkno, brush);
+			pen_box = (HPEN)SelectObject(hdcOkno, pen);
 			Rectangle(hdcOkno, x, y, 40 + x, 40 + y);
-			SelectObject(hdcOkno, Pudelko);
-			SelectObject(hdcOkno, Piornik);
+			SelectObject(hdcOkno, brush_box);
+			SelectObject(hdcOkno, pen_box);
 
-			DeleteObject(OlowekCzerw);
-			DeleteObject(PedzelZiel);
+			DeleteObject(pen);
+			DeleteObject(brush);
 			++index_y;
 		}
 		++index_x;
 		index_y = 0;
 	}
-	save_table(matrix, "Tablica jasnoœci:\n", log);
+	
 	save_table(exemplary_image, "Przyk³adowa tablica jasnoœci:\n", log);
 	//zmiana zakresu jasnosci przed DCT z <0, 256> na <-128, 128>
 	for (index_x = 0; index_x < 8; index_x++) {
-		for (index_y = 0; index_y < 8; index_y++){
-			matrix[index_x][index_y] -= 128;
+		for (index_y = 0; index_y < 8; index_y++)
 			exemplary_image[index_x][index_y] -= 128;
-		}
 			
 	}
-	save_table(matrix, "Przesuniêta tablica jasnoœci:\n", log);
+	
 	save_table(exemplary_image, "Przyk³adowa przesuniêta tablica jasnoœci:\n", log);
-
-	std::vector<std::vector<double>>dct_table = DCT(matrix);//tablica wspolczynnikow
-	save_table(dct_table, "Wspó³czynniki DCT:\n", log);
-
 	std::vector<std::vector<double>>dct_table_ex = DCT(exemplary_image);
 	save_table(dct_table_ex, "Przyk³adowe wspó³czynniki DCT:\n", log);
 
 	std::vector<std::vector<int>>quantization_table;//tworzy tablice kwantyzacji o podanej jakosci
-	create_quan_table(70, quantization_table);
+	create_quan_table(75, quantization_table);
+	save_table(quantization_table, "Tablica kwantyzacji:\n", log);
+
+	//kwantyzacja
+	for (int x = 0; x < 8; x++) {
+		for (int y = 0; y < 8; y++) {
+			dct_table_ex[y][x] /= double(quantization_table[x][y]);
+			dct_table_ex[y][x] = round(dct_table_ex[y][x]);
+
+			if (dct_table_ex[y][x] == -0)
+				dct_table_ex[y][x] = 0;
+		}
+	}
+	save_table(dct_table_ex, "Skwantowana tablica przyk³adowych wspó³czynników DCT:\n", log);
+
+	std::vector<double> quant_output = zigzag(dct_table_ex);
+	save_vector(quant_output, "Przyk³adowy wektor do kompresji:\n", log);
+	std::ofstream tmp_file("vector_source.txt");
+	save_vector(quant_output, "", tmp_file);
+	tmp_file.close();
+
+	log << "Wynik kompresji przyk³adu:\n";//ogólny output
+	std::ifstream source("vector_source.txt");//inty ujemne/dodatnie po spacji
+	std::ofstream comp_output("comp_output.txt", std::ios::binary);//plik na krzaczory
+	std::ofstream decomp_output("decomp_output.txt");//plik na zdekompresowane inty
+	
+	huffman_comp huff;
+	
+	huff.compress(source, comp_output);//kompresja
+	huff.compress(source, log);
+	comp_output.close();
+	std::ifstream comp_input("comp_output.txt", std::ios::binary);
+
+	log << "\nWynik dekompresji przyk³adu:\n";
+	huff.decompress(comp_input, decomp_output);//dekompresja
+
+	source.close();
+	decomp_output.close();
+	comp_input.close();
+
+	source.open("decomp_output.txt");//zapis
+	int number;
+	std::vector<double>quant_vector_input;//wektor do przeksztalcenia w macierz
+	while (source >> number) {
+		log << number << " ";
+		quant_vector_input.push_back(double(number));
+	}
+	log << std::endl;
+
+	std::vector<std::vector<double>> quant_input;
+	quant_input = zigzag_matrix(quant_vector_input);//wektor przetworzony w macierz
+	save_table(quant_input, "\nMacierz przyk³adowych zdekompresowanych wspó³czynników DCT:\n", log);
+
+	for (int i = 0; i < 8;i++) {//dekwantyzacja
+		for (int j = 0; j < 8; j++)
+			quant_input[i][j] *= quantization_table[i][j];
+	}
+	save_table(quant_input, "\nMacierz przyk³adowych zdekwantyzowanych wspó³czynników DCT:\n", log);
+
+	std::vector<std::vector<int>>decompressed_output = IDCT(quant_input);//odwrotna DCT
+	log << "\nZdekompresowany przesuniêty przyk³ad:\n";//zapis
+	for (auto v : decompressed_output) {
+		for (auto e : v)
+			log << e << " ";
+		log << std::endl;
+	}
+	log<<"\nZdekompresowany przyk³ad:\n";
+	for (int i = 0; i < 8;i++) {
+		for (int j = 0; j < 8; j++) {
+			decompressed_output[i][j] += 128;
+			log << decompressed_output[i][j] << " ";
+		}
+		log << std::endl;
+	}
+
+	index_x = index_y = 0;//wyswietlanie przykladu
+	for (x = 720; x < 1040; x += 40) {//kolumny
+		for (y = 40; y < 360; y += 40) {//wiersze
+			brush = CreateSolidBrush(RGB(decompressed_output[index_y][index_x], decompressed_output[index_y][index_x], decompressed_output[index_y][index_x]));
+			pen = CreatePen(PS_DOT, 1, 0x0000FF);
+			brush_box = (HBRUSH)SelectObject(hdcOkno, brush);
+			pen_box = (HPEN)SelectObject(hdcOkno, pen);
+			Rectangle(hdcOkno, x, y, 40 + x, 40 + y);
+			SelectObject(hdcOkno, brush_box);
+			SelectObject(hdcOkno, pen_box);
+
+			DeleteObject(pen);
+			DeleteObject(brush);
+			++index_y;
+		}
+		++index_x;
+		index_y = 0;
+	}
+
+	ReleaseDC(hwnd, hdcOkno);
+	log.close();
+}
+
+void rysuj_8x8(HWND hwnd)
+{
+	HDC hdcOkno = GetDC(hwnd);
+	HBRUSH brush, brush_box;
+	HPEN pen, pen_box;
+	std::ofstream log("jpeg_log.txt");
+	int x, y;
+	std::vector<std::vector<int>> matrix;
+	int luminosity, index_x = 0, index_y = 0;
+	srand(time(0));
+	for (x = 160; x < 480; x += 40) {//kolumny
+		std::vector<int> tmp;
+		for (y = 480; y < 800; y += 40) {//wiersze
+			luminosity = randomInt(78, 178);//zmniejszenie kontrastow
+			brush = CreateSolidBrush(RGB(luminosity, luminosity, luminosity));
+			pen = CreatePen(PS_DOT, 1, 0x0000FF);//psychodela
+			brush_box = (HBRUSH)SelectObject(hdcOkno, brush);
+			pen_box = (HPEN)SelectObject(hdcOkno, pen);
+			Rectangle(hdcOkno, x, y, 40 + x, 40 + y);
+			SelectObject(hdcOkno, brush_box);
+			SelectObject(hdcOkno, pen_box);
+			tmp.push_back(luminosity);
+
+			DeleteObject(pen);
+			DeleteObject(brush);
+		}
+		matrix.push_back(tmp);
+	}
+	save_table(matrix, "Tablica jasnoœci:\n", log);
+	//zmiana zakresu jasnosci przed DCT z <0, 256> na <-128, 128>
+	for (index_x = 0; index_x < 8; index_x++) {
+		for (index_y = 0; index_y < 8; index_y++)
+			matrix[index_x][index_y] -= 128;
+
+	}
+	save_table(matrix, "Przesuniêta tablica jasnoœci:\n", log);
+	std::vector<std::vector<double>>dct_table = DCT(matrix);//tablica wspolczynnikow
+	save_table(dct_table, "Wspó³czynniki DCT:\n", log);
+	
+	std::vector<std::vector<int>>quantization_table;//tworzy tablice kwantyzacji o podanej jakosci
+	create_quan_table(75, quantization_table);
 	save_table(quantization_table, "Tablica kwantyzacji:\n", log);
 
 	//kwantyzacja
@@ -279,47 +445,89 @@ void rysuj_8x8(HWND hwnd){//8x8
 			dct_table[x][y] /= double(quantization_table[x][y]);
 			dct_table[x][y] = round(dct_table[x][y]);
 
-			dct_table_ex[y][x] /= double(quantization_table[x][y]);
-			dct_table_ex[y][x] = round(dct_table_ex[y][x]);
-
 			if (dct_table[x][y] == -0)
 				dct_table[x][y] = 0;
-
-			if (dct_table_ex[y][x] == -0)
-				dct_table_ex[y][x] = 0;
 		}
 	}
 	save_table(dct_table, "Skwantowana tablica wspó³czynników DCT:\n", log);
-	save_table(dct_table_ex, "Skwantowana tablica przyk³adowych wspó³czynników DCT:\n", log);
-
 	std::vector<double> quant_output = zigzag(dct_table);
 	save_vector(quant_output, "Wektor do kompresji:\n", log);
-	quant_output.clear();
-	quant_output = zigzag(dct_table_ex);
-	save_vector(quant_output, "Przykladowy wektor do kompresji:\n", log);
+	
 	std::ofstream tmp_file("vector_source.txt");
 	save_vector(quant_output, "", tmp_file);
 	tmp_file.close();
 
 	log << "Wynik kompresji:\n";//ogólny output
 	std::ifstream source("vector_source.txt");//inty ujemne/dodatnie po spacji
-	std::ofstream comp_output("comp_output.txt");//plik na krzaczory
+	std::ofstream comp_output("comp_output.txt", std::ios::binary);//plik na krzaczory
 	std::ofstream decomp_output("decomp_output.txt");//plik na zdekompresowane inty
-	
 
-	huffman_comp vector;
-	
-	vector.compress(source, comp_output);
-	vector.compress(source, log);
+	huffman_comp huff;
+
+	huff.compress(source, comp_output);//kompresja
+	huff.compress(source, log);
 	comp_output.close();
-	std::ifstream comp_input("comp_output.txt");
+	std::ifstream comp_input("comp_output.txt", std::ios::binary);
 
 	log << "\nWynik dekompresji:\n";
-	vector.decompress(comp_input, decomp_output);
-	vector.decompress(comp_input, log);
-	
+	huff.decompress(comp_input, decomp_output);//dekompresja
+
 	source.close();
 	decomp_output.close();
+	comp_input.close();
+
+	source.open("decomp_output.txt");//zapis
+	int number;
+	std::vector<double>quant_vector_input;//wektor do przeksztalcenia w macierz
+	while (source >> number) {
+		log << number << " ";
+		quant_vector_input.push_back(double(number));
+	}
+	log << std::endl;
+
+	std::vector<std::vector<double>> quant_input;
+	quant_input = zigzag_matrix(quant_vector_input);//wektor przetworzony w macierz
+	save_table(quant_input, "\nMacierz zdekompresowanych wspó³czynników DCT:\n", log);
+	for (int i = 0; i < 8; i++) {//dekwantyzacja
+		for (int j = 0; j < 8; j++)
+			quant_input[i][j] *= quantization_table[i][j];
+	}
+	save_table(quant_input, "\nMacierz przyk³adowych zdekwantyzowanych wspó³czynników DCT:\n", log);
+
+	std::vector<std::vector<int>>decompressed_output = IDCT(quant_input);//odwrotna DCT
+	log << "\nZdekompresowany przesuniêty przyk³ad:\n";//zapis
+	for (auto v : decompressed_output) {
+		for (auto e : v)
+			log << e << " ";
+		log << std::endl;
+	}
+	log << "\nZdekompresowany przyk³ad:\n";
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			decompressed_output[i][j] += 128;
+			log << decompressed_output[i][j] << " ";
+		}
+		log << std::endl;
+	}
+
+	index_x = index_y = 0;//wyswietlanie przykladu
+	for (x = 720; x < 1040; x += 40) {//kolumny
+		for (y = 480; y < 800; y += 40) {//wiersze
+			brush = CreateSolidBrush(RGB(decompressed_output[index_y][index_x], decompressed_output[index_y][index_x], decompressed_output[index_y][index_x]));
+			pen = CreatePen(PS_DOT, 1, 0x0000FF);
+			brush_box = (HBRUSH)SelectObject(hdcOkno, brush);
+			pen_box = (HPEN)SelectObject(hdcOkno, pen);
+			Rectangle(hdcOkno, x, y, 40 + x, 40 + y);
+			SelectObject(hdcOkno, brush_box);
+			SelectObject(hdcOkno, pen_box);
+
+			DeleteObject(pen);
+			DeleteObject(brush);
+			++index_y;
+		}
+		++index_x;
+		index_y = 0;
+	}
 
 	ReleaseDC(hwnd, hdcOkno);
 	log.close();

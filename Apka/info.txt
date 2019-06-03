@@ -5,6 +5,7 @@ Projekt JiPP
 Linki do materia³ów i algorytmów, z których korzystaliœmy:
 Algorytm kompresji JPEG - https://www.youtube.com/watch?v=Q2aEzeMDHMA
 DCT - https://www.geeksforgeeks.org/discrete-cosine-transform-algorithm-program/
+IDCT - https://stackoverflow.com/questions/8553717/trying-to-implement-the-inverse-of-a-dct-88-matrix
 Podstawowy kurs Windows API - http://cpp0x.pl/kursy/Kurs-WinAPI-C++/167
 Konwersja wstring - https://stackoverflow.com/questions/27220/how-to-convert-stdstring-to-lpcwstr-in-c-unicode
 --------------------------------

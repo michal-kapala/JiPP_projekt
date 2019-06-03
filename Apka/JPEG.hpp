@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <random>
+#include <stdio.h>
 
 class position {
 public:
@@ -40,4 +41,5 @@ template <typename T>
 void save_table(const std::vector<std::vector<T>> &table, const std::string &desc, std::ofstream &file);
 template <typename T>
 void save_vector(const std::vector<T> &table, const std::string &desc, std::ofstream &file);
+void rysuj_przyklad(HWND hwnd);
 void rysuj_8x8(HWND hwnd);

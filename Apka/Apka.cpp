@@ -113,11 +113,15 @@ BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_COMMAND:
 	{
+		
 		// reakcja na przyciski
 		switch (LOWORD(wParam))
 		{
 		case DIALOG_COMPRESS:
 			rysuj_8x8(hwnd);
+			break;
+		case DIALOG_SHOW_EXAMPLE:
+			rysuj_przyklad(hwnd);
 			break;
 		case WM_DESTROY:
 			EndDialog(hwnd, DIALOG_COMPRESS);
