@@ -239,7 +239,7 @@ std::vector<std::vector<double>> zigzag_matrix(const std::vector<double>&vec) {
 	return out;
 }
 
-void rysuj_przyklad(HWND hwnd){//8x8
+void rysuj_przyklad(HWND hwnd, unsigned int quality){//8x8
 	HDC hdcOkno = GetDC(hwnd);
 	HBRUSH brush, brush_box;
 	HPEN pen, pen_box;
@@ -298,7 +298,7 @@ void rysuj_przyklad(HWND hwnd){//8x8
 	save_table(dct_table_ex, "Przyk³adowe wspó³czynniki DCT:\n", log);
 
 	std::vector<std::vector<int>>quantization_table;//tworzy tablice kwantyzacji o podanej jakosci
-	create_quan_table(75, quantization_table);
+	create_quan_table(quality, quantization_table);
 	save_table(quantization_table, "Tablica kwantyzacji:\n", log);
 
 	//kwantyzacja
@@ -396,7 +396,7 @@ void rysuj_przyklad(HWND hwnd){//8x8
 	log.close();
 }
 
-void rysuj_8x8(HWND hwnd)
+void rysuj_8x8(HWND hwnd, unsigned int quality)
 {
 	HDC hdcOkno = GetDC(hwnd);
 	HBRUSH brush, brush_box;
@@ -436,7 +436,7 @@ void rysuj_8x8(HWND hwnd)
 	save_table(dct_table, "Wspó³czynniki DCT:\n", log);
 	
 	std::vector<std::vector<int>>quantization_table;//tworzy tablice kwantyzacji o podanej jakosci
-	create_quan_table(75, quantization_table);
+	create_quan_table(quality, quantization_table);
 	save_table(quantization_table, "Tablica kwantyzacji:\n", log);
 
 	//kwantyzacja

@@ -13,7 +13,8 @@
 HWND mainWnd, hTextbox;
 MSG message;
 HMENU hMenu;
-LPTSTR defPath;// \Projekt_JiPP\Apka\
+LPTSTR defPath;// \Projekt_JiPP\Apka\ //
+int quality = 50;
 
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam);
@@ -113,15 +114,70 @@ BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_COMMAND:
 	{
-		
 		// reakcja na przyciski
 		switch (LOWORD(wParam))
 		{
+		case QUALITY_25:
+			if (IsDlgButtonChecked(hwnd, QUALITY_25) == BST_UNCHECKED){
+				quality = 25;
+				CheckDlgButton(hwnd, QUALITY_25, BST_CHECKED);
+				CheckDlgButton(hwnd, QUALITY_50, BST_UNCHECKED);
+				CheckDlgButton(hwnd, QUALITY_75, BST_UNCHECKED);
+				CheckDlgButton(hwnd, QUALITY_95, BST_UNCHECKED);
+			}
+			else {
+				CheckDlgButton(hwnd, QUALITY_25, BST_UNCHECKED);
+				quality = 50;
+				CheckDlgButton(hwnd, QUALITY_50, BST_CHECKED);
+			}
+			break;
+		case QUALITY_50:
+			if (IsDlgButtonChecked(hwnd, QUALITY_50) == BST_UNCHECKED) {
+				quality = 50;
+				CheckDlgButton(hwnd, QUALITY_25, BST_UNCHECKED);
+				CheckDlgButton(hwnd, QUALITY_50, BST_CHECKED);
+				CheckDlgButton(hwnd, QUALITY_75, BST_UNCHECKED);
+				CheckDlgButton(hwnd, QUALITY_95, BST_UNCHECKED);
+			}
+			else {
+				CheckDlgButton(hwnd, QUALITY_50, BST_UNCHECKED);
+				quality = 50;
+			}	
+			break;
+		case QUALITY_75:
+			if (IsDlgButtonChecked(hwnd, QUALITY_75) == BST_UNCHECKED) {
+				quality = 75;
+				CheckDlgButton(hwnd, QUALITY_25, BST_UNCHECKED);
+				CheckDlgButton(hwnd, QUALITY_50, BST_UNCHECKED);
+				CheckDlgButton(hwnd, QUALITY_75, BST_CHECKED);
+				CheckDlgButton(hwnd, QUALITY_95, BST_UNCHECKED);
+			}
+			else {
+				CheckDlgButton(hwnd, QUALITY_75, BST_UNCHECKED);
+				quality = 50;
+				CheckDlgButton(hwnd, QUALITY_50, BST_CHECKED);
+			}
+			break;
+		case QUALITY_95:
+			if (IsDlgButtonChecked(hwnd, QUALITY_95) == BST_UNCHECKED) {
+				quality = 95;
+				CheckDlgButton(hwnd, QUALITY_25, BST_UNCHECKED);
+				CheckDlgButton(hwnd, QUALITY_50, BST_UNCHECKED);
+				CheckDlgButton(hwnd, QUALITY_75, BST_UNCHECKED);
+				CheckDlgButton(hwnd, QUALITY_95, BST_CHECKED);
+			}
+			else
+			{
+				CheckDlgButton(hwnd, QUALITY_95, BST_UNCHECKED);
+				quality = 50;
+				CheckDlgButton(hwnd, QUALITY_50, BST_CHECKED);
+			}
+			break;
 		case DIALOG_COMPRESS:
-			rysuj_8x8(hwnd);
+			rysuj_8x8(hwnd, quality);
 			break;
 		case DIALOG_SHOW_EXAMPLE:
-			rysuj_przyklad(hwnd);
+			rysuj_przyklad(hwnd, quality);
 			break;
 		case WM_DESTROY:
 			EndDialog(hwnd, DIALOG_COMPRESS);
