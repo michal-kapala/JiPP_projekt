@@ -19,6 +19,8 @@
 #define QUALITY_50						41
 #define QUALITY_75						42
 #define QUALITY_95						43
+#define MENU_FILE_DECOMPRESS_LZW		44
+#define MENU_FILE_DECOMPRESS_HUFFMAN	45
 #define INFO_ID							"info.txt"
 #define PROJECT_STATIC_DIR				L"C:\\Users\\Michal\\Desktop\\d¿ip d¿ip\\JiPP_projekt\\Apka"//TOFIX statyczna sciezka ale chociaz dziala
 #define BUFFER_MAX_SIZE					3000000//maksymalna liczba znakow dla pliku z menuOpenView
@@ -28,6 +30,8 @@ namespace file {
 	void menuOpen(HWND hwnd);
 	void menuCompressLZW(HWND hwnd);
 	void menuCompressHuffman(HWND hwnd);
+	void menuDecompressLZW(HWND hwnd);
+	void menuDecompressHuffman(HWND hwnd);
 }
 
 void testMenu(HWND window, LPCWSTR msg);

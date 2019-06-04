@@ -85,6 +85,10 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 			ShowWindow(hTextbox, SW_SHOW);
 			file::menuCompressHuffman(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
+		case MENU_FILE_DECOMPRESS_HUFFMAN:
+			ShowWindow(hTextbox, SW_SHOW);
+			file::menuDecompressHuffman(hwnd);
+			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_JPEG://!!!!!!!!!!!!!!11111111111!!!!!!!!!11!!!1!!1!1111111111111!!11!!!!111!1!!!!!!!!!!!!!1111!11111!!!111!!!!!1!1!!!!
 			DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(DIALOG_TITLE), hwnd, (DLGPROC)jpegDlgProc);
 			return DefWindowProc(hwnd, msg, wParam, lParam);

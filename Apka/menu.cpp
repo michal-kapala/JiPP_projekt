@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <cctype>
+#include <sstream>
 #include "menu.hpp"
 #include "my_huff.hpp"
 
@@ -73,153 +74,6 @@ void file::menuSaveFile(HWND hwnd) {
 		MessageBox(hwnd, L"Couldn't save file", L"Error", MB_ICONERROR);
 	CloseHandle(hFile);
 	GlobalFree(textboxContent);
-/* TODO - INTERPRETER(!!!11!)
-
-	std::ifstream badFile(file.lpstrFile);
-	std::ofstream goodFile("temporary_name.txt");
-	std::string temp;
-	char tmp;
-	while (!badFile.eof()){//interpreter znaku
-		for (int i = 0; i < temp.size(); i++){
-			badFile >> tmp;
-			if (int(tmp) == 0 || int(tmp) == 1)
-				continue;
-			switch (tmp)
-			{
-			case'a': goodFile << 'a'; break;//ma³e litery
-			case'b': goodFile << 'b'; break;
-			case'c': goodFile << 'c'; break;
-			case'd': goodFile << 'd'; break;
-			case'e': goodFile << 'e'; break;
-			case'f': goodFile << 'f'; break;
-			case'g': goodFile << 'g'; break;
-			case'h': goodFile << 'h'; break;
-			case'i': goodFile << 'i'; break;
-			case'j': goodFile << 'j'; break;
-			case'k': goodFile << 'k'; break;
-			case'l': goodFile << 'l'; break;
-			case'm': goodFile << 'm'; break;
-			case'n': goodFile << 'n'; break;
-			case'o': goodFile << 'o'; break;
-			case'p': goodFile << 'p'; break;
-			case'q': goodFile << 'q'; break;
-			case'r': goodFile << 'r'; break;
-			case's': goodFile << 's'; break;
-			case't': goodFile << 't'; break;
-			case'u': goodFile << 'u'; break;
-			case'w': goodFile << 'w'; break;
-			case'v': goodFile << 'v'; break;
-			case'x': goodFile << 'x'; break;
-			case'y': goodFile << 'y'; break;
-			case'z': goodFile << 'z'; break;
-			case'¹': goodFile << "¹"; break;//polskie
-			case'ê': goodFile << "ê"; break;
-			case'¿': goodFile << "¿"; break;
-			case'Ÿ': goodFile << "Ÿ"; break;
-			case'œ': goodFile << "œ"; break;
-			case'æ': goodFile << "æ"; break;
-			case'ñ': goodFile << "ñ"; break;
-			case'³': goodFile << "³"; break;
-			case'ó': goodFile << "ó"; break;
-
-			case'A': goodFile << 'A'; break;//du¿e litery
-			case'B': goodFile << 'B'; break;
-			case'C': goodFile << 'C'; break;
-			case'D': goodFile << 'D'; break;
-			case'E': goodFile << 'E'; break;
-			case'F': goodFile << 'F'; break;
-			case'G': goodFile << 'G'; break;
-			case'H': goodFile << 'H'; break;
-			case'I': goodFile << 'I'; break;
-			case'J': goodFile << 'J'; break;
-			case'K': goodFile << 'K'; break;
-			case'L': goodFile << 'L'; break;
-			case'M': goodFile << 'M'; break;
-			case'N': goodFile << 'N'; break;
-			case'O': goodFile << 'O'; break;
-			case'P': goodFile << 'P'; break;
-			case'Q': goodFile << 'Q'; break;
-			case'R': goodFile << 'R'; break;
-			case'S': goodFile << 'S'; break;
-			case'T': goodFile << 'T'; break;
-			case'U': goodFile << 'U'; break;
-			case'W': goodFile << 'W'; break;
-			case'V': goodFile << 'V'; break;
-			case'X': goodFile << 'X'; break;
-			case'Y': goodFile << 'Y'; break;
-			case'Z': goodFile << 'Z'; break;
-			case'¥': goodFile << '¥'; break;//polskie
-			case'Ê': goodFile << 'Ê'; break;
-			case'¯': goodFile << '¯'; break;
-			case'': goodFile << ''; break;
-			case'Œ': goodFile << 'Œ'; break;
-			case'Æ': goodFile << 'Æ'; break;
-			case'Ñ': goodFile << 'Ñ'; break;
-			case'£': goodFile << '£'; break;
-			case'Ó': goodFile << 'Ó'; break;
-
-			case'0': goodFile << '0'; break;//liczby
-			case'1': goodFile << '1'; break;
-			case'2': goodFile << '2'; break;
-			case'3': goodFile << '3'; break;
-			case'4': goodFile << '4'; break;
-			case'5': goodFile << '5'; break;
-			case'6': goodFile << '6'; break;
-			case'7': goodFile << '7'; break;
-			case'8': goodFile << '8'; break;
-			case'9': goodFile << '9'; break;
-
-			case ' ': goodFile << ' '; break;//znaki specjalne
-			case ',': goodFile << ','; break;
-			case '!': goodFile << '!'; break;
-			case '?': goodFile << '?'; break;
-			case '.': goodFile << '.'; break;
-			case ':': goodFile << ':'; break;
-			case ';': goodFile << ';'; break;
-			case '@': goodFile << '@'; break;
-			case '#': goodFile << '#'; break;
-			case '$': goodFile << '$'; break;
-			case '%': goodFile << '%'; break;
-			case '^': goodFile << '^'; break;
-			case '&': goodFile << '&'; break;
-			case '*': goodFile << '*'; break;
-			case '(': goodFile << '('; break;
-			case ')': goodFile << ')'; break;
-			case '-': goodFile << '-'; break;
-			case '_': goodFile << '_'; break;
-			case '=': goodFile << '='; break;
-			case '+': goodFile << '+'; break;
-			case '\\': goodFile << '\\'; break;
-			case '/': goodFile << '/'; break;
-			case '|': goodFile << '|'; break;
-			case '\t': goodFile << '\t'; break;
-			case '\n': goodFile << '\n'; break;
-			case '\r': goodFile << '\r'; break;
-			case'\r\n': goodFile << '\r\n'; break;
-			case '\0': goodFile << '\0'; break;
-			case '<': goodFile << '<'; break;
-			case '>': goodFile << '>'; break;
-			case '\'': goodFile << '\''; break;
-			case '"': goodFile << '"'; break;
-			case '{': goodFile << '{'; break;
-			case '}': goodFile << '}'; break;
-			case '[': goodFile << '['; break;
-			case ']': goodFile << ']'; break;
-			case '~': goodFile << '~'; break;
-			case '`': goodFile << '`'; break;
-
-			default: break;
-			}
-
-		}
-	}
-	badFile.close();
-	goodFile.close();
-	DeleteFileA((LPCSTR)file.lpstrFile);
-	LPCSTR name = "temporary_name.txt";
-	//MoveFile((LPCWSTR)name, (LPCTSTR)file.lpstrFile);
-	//DeleteFileA(name);
-	*/
 }
 
 void file::menuOpen(HWND hwnd)
@@ -279,20 +133,136 @@ void file::menuCompressHuffman(HWND hwnd) {
 	ofn.nMaxFile = MAX_PATH;
 	ofn.lpstrFile = (LPWSTR)fileName;
 	ofn.lpstrInitialDir = NULL;
-	ofn.lpstrTitle = L"Kompresuj";
+	ofn.lpstrTitle = L"Wybierz plik do skompresowania";
 	ofn.lpstrDefExt = L"txt";
 	ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_EXTENSIONDIFFERENT;
 	GetOpenFileNameW(&ofn);
+
 	std::ifstream file(ofn.lpstrFile);
-	std::fstream res("kompresja_huff_wynik.txt");
+
+	OPENFILENAME compressed;
+	ZeroMemory(&compressed, sizeof(compressed));
+	compressed.lStructSize = sizeof(compressed);
+	compressed.hwndOwner = hwnd;
+	compressed.lpstrFilter = L"Pliki binarne \0*.bin\0Pliki tekstowe \0*.txt\0Wszystkie pliki \0*.*\0";
+	char fileBuffer[MAX_PATH] = "";
+	compressed.lpstrFile = (LPWSTR)fileBuffer;
+	compressed.nMaxFile = MAX_PATH;
+	compressed.lpstrInitialDir = NULL;
+	compressed.lpstrTitle = L"Kompresuj do";
+	compressed.lpstrDefExt = L"txt";
+	compressed.Flags = OFN_HIDEREADONLY | OFN_CREATEPROMPT | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
+
+	if (!GetSaveFileNameW(&compressed)) {
+		switch (CommDlgExtendedError()) {
+		case 0xFFFF:
+			MessageBox(hwnd, L"DialogBox function failed (check window handle)", L"Error", MB_ICONERROR);
+			break;
+		case 0x0006:
+			MessageBox(hwnd, L"Specified resource not found", L"Error", MB_ICONERROR);
+			break;
+		case 0x0002:
+			MessageBox(hwnd, L"Initialization failed (insufficient memory)", L"Error", MB_ICONERROR);
+			break;
+		case 0x0007:
+			MessageBox(hwnd, L"Loading the specified resource failed", L"Error", MB_ICONERROR);
+			break;
+		case 0x0005:
+			MessageBox(hwnd, L"Loading the specified string failed", L"Error", MB_ICONERROR);
+			break;
+		case 0x0001:
+			MessageBox(hwnd, L"IStructSize member of the common dialog box is invalid", L"Error", MB_ICONERROR);
+			break;
+		default:
+			MessageBox(hwnd, L"Check MSDN CDERR_ list", L"Error", MB_ICONERROR);
+			break;
+		}
+	}
+
+	std::ofstream res(compressed.lpstrFile, std::ios::binary);
 	huffman_comp huff;
 	huff.compress(file, res);
 	res.close();
 	file.close();
 }
 
-void menuJPEG(HWND hwnd, LPCWSTR wndClassName) {
-	//testMenu(hwnd, L"HAHA NIE DLA PSA JPEG");
+void file::menuDecompressHuffman(HWND hwnd)
+{
+	OPENFILENAME ofn;
+	char fileName[MAX_PATH] = "";
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = hwnd;
+	ofn.lpstrFilter = L"Pliki binarne \0*.bin\0Pliki tekstowe \0*.txt\0Wszystkie pliki \0*.*\0";
+	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrFile = (LPWSTR)fileName;
+	ofn.lpstrInitialDir = NULL;
+	ofn.lpstrTitle = L"Wybierz plik do dekompresji";
+	ofn.lpstrDefExt = L"bin";
+	ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_EXTENSIONDIFFERENT;
+	GetOpenFileNameW(&ofn);
+
+	std::ifstream file(ofn.lpstrFile, std::ios::binary);
+
+	OPENFILENAME decompressed;
+	ZeroMemory(&decompressed, sizeof(decompressed));
+	decompressed.lStructSize = sizeof(decompressed);
+	decompressed.hwndOwner = hwnd;
+	decompressed.lpstrFilter = L"Pliki tekstowe \0*.txt\0Wszystkie pliki \0*.*\0";
+	char fileBuffer[MAX_PATH] = "";
+	decompressed.lpstrFile = (LPWSTR)fileBuffer;
+	decompressed.nMaxFile = MAX_PATH;
+	decompressed.lpstrInitialDir = NULL;
+	decompressed.lpstrTitle = L"Dekompresuj do";
+	decompressed.lpstrDefExt = L"txt";
+	decompressed.Flags = OFN_HIDEREADONLY | OFN_CREATEPROMPT | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
+
+	if (!GetSaveFileNameW(&decompressed)) {
+		switch (CommDlgExtendedError()) {
+		case 0xFFFF:
+			MessageBox(hwnd, L"DialogBox function failed (check window handle)", L"Error", MB_ICONERROR);
+			break;
+		case 0x0006:
+			MessageBox(hwnd, L"Specified resource not found", L"Error", MB_ICONERROR);
+			break;
+		case 0x0002:
+			MessageBox(hwnd, L"Initialization failed (insufficient memory)", L"Error", MB_ICONERROR);
+			break;
+		case 0x0007:
+			MessageBox(hwnd, L"Loading the specified resource failed", L"Error", MB_ICONERROR);
+			break;
+		case 0x0005:
+			MessageBox(hwnd, L"Loading the specified string failed", L"Error", MB_ICONERROR);
+			break;
+		case 0x0001:
+			MessageBox(hwnd, L"IStructSize member of the common dialog box is invalid", L"Error", MB_ICONERROR);
+			break;
+		default:
+			MessageBox(hwnd, L"Check MSDN CDERR_ list", L"Error", MB_ICONERROR);
+			break;
+		}
+	}
+	else
+	{
+		std::ofstream res(decompressed.lpstrFile);
+		huffman_comp huff;
+		huff.decompress(file, res);
+		res.close();
+		file.close();
+		file.open(decompressed.lpstrFile);                   // Open for reading
+
+		std::stringstream buffer;                             // Store contents in a std::string
+		buffer << file.rdbuf();
+		std::string contents = buffer.str();
+
+		file.close();
+		contents.pop_back();                                  // Remove last character
+
+		std::ofstream fileOut(decompressed.lpstrFile, std::ios::trunc); // Open for writing (while also clearing file)
+		fileOut << contents;                                  // Output contents with removed character
+		fileOut.close();
+	}
+	
 }
 
 void menuInfo(HWND hTextbox) {
