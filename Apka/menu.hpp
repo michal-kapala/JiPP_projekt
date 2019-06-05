@@ -35,6 +35,5 @@ namespace file {
 }
 
 void testMenu(HWND window, LPCWSTR msg);
-void menuJPEG(HWND hwnd, LPCWSTR wndClassName);//stwórz okna input/output, okienka na liczby etc. uruchom algorytm i wyœwietl
 void menuInfo(HWND hTextbox);
 void clearTextbox(HWND hTextbox);

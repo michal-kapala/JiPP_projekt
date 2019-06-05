@@ -9,6 +9,7 @@
 #include <sstream>
 #include "menu.hpp"
 #include "my_huff.hpp"
+#include "lzw_rework.cpp"
 
 //TODO, typy i argumenty do pozmieniania
 void testMenu(HWND window, LPCWSTR msg) {
@@ -104,7 +105,7 @@ void file::menuOpen(HWND hwnd)
 			MessageBox(hwnd, L"File size extending 4GB", L"Error", MB_ICONERROR);
 		else {
 			buff =(LPSTR) GlobalAlloc(GPTR, dwSize);
-			if (!ReadFile(hFile, buff, dwSize, &dwTmpBuff, NULL))//TOFIX czasem ucina niezaleznie od rozmiaru pliku, a czasem wyswietla cale 470KB tekstu, ale stabilne toto
+			if (!ReadFile(hFile, buff, dwSize, &dwTmpBuff, NULL))
 				MessageBox(hwnd, L"File reading failure", L"Error", MB_ICONERROR);
 			else {
 				unicoded = (LPSTR)GlobalAlloc(GPTR, dwSize);
@@ -120,7 +121,80 @@ void file::menuOpen(HWND hwnd)
 }
 
 void file::menuCompressLZW(HWND hwnd) {
-	testMenu(hwnd, L"Skompresuj¿e LZW i eksportuj Bóg zap³aæ");
+	OPENFILENAME ofn;
+	char fileName[MAX_PATH] = "";
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = hwnd;
+	ofn.lpstrFilter = L"Pliki tekstowe \0*.txt\0Wszystkie pliki \0*.*\0";
+	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrFile = (LPWSTR)fileName;
+	ofn.lpstrInitialDir = NULL;
+	ofn.lpstrTitle = L"Wybierz plik do skompresowania";
+	ofn.lpstrDefExt = L"txt";
+	ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_EXTENSIONDIFFERENT;
+	if (!GetOpenFileNameW(&ofn))
+		MessageBox(hwnd, L"No file selected", L"Error", MB_ICONERROR);
+	else {
+
+		std::ifstream source(ofn.lpstrFile);
+
+		OPENFILENAME compressed;
+		ZeroMemory(&compressed, sizeof(compressed));
+		compressed.lStructSize = sizeof(compressed);
+		compressed.hwndOwner = hwnd;
+		compressed.lpstrFilter = L"Pliki tekstowe \0*.txt\0Wszystkie pliki \0*.*\0";
+		char fileBuffer[MAX_PATH] = "";
+		compressed.lpstrFile = (LPWSTR)fileBuffer;
+		compressed.nMaxFile = MAX_PATH;
+		compressed.lpstrInitialDir = NULL;
+		compressed.lpstrTitle = L"Kompresuj do";
+		compressed.lpstrDefExt = L"txt";
+		compressed.Flags = OFN_HIDEREADONLY | OFN_CREATEPROMPT | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
+
+		if (!GetSaveFileNameW(&compressed)) {
+			switch (CommDlgExtendedError()) {
+			case 0xFFFF:
+				MessageBox(hwnd, L"DialogBox function failed (check window handle)", L"Error", MB_ICONERROR);
+				break;
+			case 0x0006:
+				MessageBox(hwnd, L"Specified resource not found", L"Error", MB_ICONERROR);
+				break;
+			case 0x0002:
+				MessageBox(hwnd, L"Initialization failed (insufficient memory)", L"Error", MB_ICONERROR);
+				break;
+			case 0x0007:
+				MessageBox(hwnd, L"Loading the specified resource failed", L"Error", MB_ICONERROR);
+				break;
+			case 0x0005:
+				MessageBox(hwnd, L"Loading the specified string failed", L"Error", MB_ICONERROR);
+				break;
+			case 0x0001:
+				MessageBox(hwnd, L"IStructSize member of the common dialog box is invalid", L"Error", MB_ICONERROR);
+				break;
+			default:
+				MessageBox(hwnd, L"Check MSDN CDERR_ list", L"Error", MB_ICONERROR);
+				break;
+			}
+		}
+
+		std::ofstream res(compressed.lpstrFile);
+
+		std::string tmp;
+		LZW_comp LZW(16);
+		while (!source.eof())
+		{
+			getline(source, tmp);
+			tmp += "\0";
+			LPSTR tmp_str = const_cast<char *>(tmp.c_str());
+
+			std::vector<unsigned short int> vector = LZW.compress(tmp_str);
+			for (auto e : vector)
+				res << e << " ";
+		}
+		source.close();
+		res.close();
+	}
 }
 
 void file::menuCompressHuffman(HWND hwnd) {
@@ -184,6 +258,78 @@ void file::menuCompressHuffman(HWND hwnd) {
 	huff.compress(file, res);
 	res.close();
 	file.close();
+}
+
+void file::menuDecompressLZW(HWND hwnd)
+{
+	OPENFILENAME ofn;
+	char fileName[MAX_PATH] = "";
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = hwnd;
+	ofn.lpstrFilter = L"Pliki tekstowe \0*.txt\0Wszystkie pliki \0*.*\0";
+	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrFile = (LPWSTR)fileName;
+	ofn.lpstrInitialDir = NULL;
+	ofn.lpstrTitle = L"Wybierz plik do skompresowania";
+	ofn.lpstrDefExt = L"txt";
+	ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_EXTENSIONDIFFERENT;
+	if(!GetOpenFileNameW(&ofn))
+		MessageBox(hwnd, L"No file selected", L"Error", MB_ICONERROR);
+	else {
+
+		std::ifstream source(ofn.lpstrFile);
+
+		OPENFILENAME decompressed;
+		ZeroMemory(&decompressed, sizeof(decompressed));
+		decompressed.lStructSize = sizeof(decompressed);
+		decompressed.hwndOwner = hwnd;
+		decompressed.lpstrFilter = L"Pliki tekstowe \0*.txt\0Wszystkie pliki \0*.*\0";
+		char fileBuffer[MAX_PATH] = "";
+		decompressed.lpstrFile = (LPWSTR)fileBuffer;
+		decompressed.nMaxFile = MAX_PATH;
+		decompressed.lpstrInitialDir = NULL;
+		decompressed.lpstrTitle = L"Kompresuj do";
+		decompressed.lpstrDefExt = L"txt";
+		decompressed.Flags = OFN_HIDEREADONLY | OFN_CREATEPROMPT | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
+
+		if (!GetSaveFileNameW(&decompressed)) {
+			switch (CommDlgExtendedError()) {
+			case 0xFFFF:
+				MessageBox(hwnd, L"DialogBox function failed (check window handle)", L"Error", MB_ICONERROR);
+				break;
+			case 0x0006:
+				MessageBox(hwnd, L"Specified resource not found", L"Error", MB_ICONERROR);
+				break;
+			case 0x0002:
+				MessageBox(hwnd, L"Initialization failed (insufficient memory)", L"Error", MB_ICONERROR);
+				break;
+			case 0x0007:
+				MessageBox(hwnd, L"Loading the specified resource failed", L"Error", MB_ICONERROR);
+				break;
+			case 0x0005:
+				MessageBox(hwnd, L"Loading the specified string failed", L"Error", MB_ICONERROR);
+				break;
+			case 0x0001:
+				MessageBox(hwnd, L"IStructSize member of the common dialog box is invalid", L"Error", MB_ICONERROR);
+				break;
+			default:
+				MessageBox(hwnd, L"Check MSDN CDERR_ list", L"Error", MB_ICONERROR);
+				break;
+			}
+		}
+		std::ofstream res(decompressed.lpstrFile);
+		std::vector<unsigned short int> vector;
+		unsigned short int number;
+		LZW_comp LZW;
+
+		while (source >> number)
+			vector.push_back(number);
+		std::string decomp_str = LZW.decompress(vector);
+		res << decomp_str;
+		source.close();
+		res.close();
+	}
 }
 
 void file::menuDecompressHuffman(HWND hwnd)

@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="Apka.cpp" />
     <ClCompile Include="JPEG.cpp" />
+    <ClCompile Include="lzw_rework.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="my_huff.cpp" />
     <ClCompile Include="stdafx.cpp">

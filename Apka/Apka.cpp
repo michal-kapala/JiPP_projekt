@@ -14,7 +14,7 @@ HWND mainWnd, hTextbox;
 MSG message;
 HMENU hMenu;
 LPTSTR defPath;// \Projekt_JiPP\Apka\ //
-int quality = 50;
+unsigned int quality = 50;
 
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam);
@@ -80,6 +80,10 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 		case MENU_FILE_COMPRESS_LZW:
 			ShowWindow(hTextbox, SW_SHOW);
 			file::menuCompressLZW(hwnd);
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		case MENU_FILE_DECOMPRESS_LZW:
+			ShowWindow(hTextbox, SW_SHOW);
+			file::menuDecompressLZW(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_FILE_COMPRESS_HUFFMAN:
 			ShowWindow(hTextbox, SW_SHOW);
