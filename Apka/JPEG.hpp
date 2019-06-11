@@ -36,7 +36,7 @@ const int quant_table_50[8][8] = { {16, 11, 10, 16, 24, 40, 51, 51},
 double round_with_precision(const double &number);//do calkowite.x
 std::vector<std::vector<double>> DCT(const std::vector<std::vector<int>> &input);
 std::vector<double> zigzag(const std::vector<std::vector<double>>&matrix);
-void create_quan_table(unsigned int quality, std::vector<std::vector<int>>&quantization_table);
+void create_quan_table(double quality, std::vector<std::vector<int>>&quantization_table);
 template <typename T>
 void save_table(const std::vector<std::vector<T>> &table, const std::string &desc, std::ofstream &file);
 template <typename T>

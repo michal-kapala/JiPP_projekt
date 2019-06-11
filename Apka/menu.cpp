@@ -11,11 +11,6 @@
 #include "my_huff.hpp"
 #include "lzw_rework.cpp"
 
-//TODO, typy i argumenty do pozmieniania
-void testMenu(HWND window, LPCWSTR msg) {
-	MessageBox(window, msg, L"Menu test", MB_ICONINFORMATION);
-}
-	
 std::wstring string_to_wstring(const std::string& s)
 {
 	int len;
@@ -29,7 +24,7 @@ std::wstring string_to_wstring(const std::string& s)
 }
 
 void file::menuSaveFile(HWND hwnd) {
-	OPENFILENAME file;//TODO Typ *.txt
+	OPENFILENAME file;
 	ZeroMemory(&file, sizeof(file));
 	file.lStructSize = sizeof(file);
 	file.hwndOwner = hwnd;
@@ -68,7 +63,7 @@ void file::menuSaveFile(HWND hwnd) {
 		}
 	}
 	HANDLE hFile = CreateFile((LPCWSTR)file.lpstrFile, FILE_SHARE_WRITE, NULL, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	DWORD textboxContentSize = 2 * GetWindowTextLength(hwnd), savedChars;//TOFIX 2 razy wiekszy plik
+	DWORD textboxContentSize = 2 * GetWindowTextLength(hwnd), savedChars;
 	LPWSTR textboxContent =(LPWSTR) GlobalAlloc(GPTR, textboxContentSize);
 	GetWindowText(hwnd, textboxContent, textboxContentSize);
 	if (!WriteFile(hFile, textboxContent, textboxContentSize, &savedChars, NULL))
@@ -413,7 +408,7 @@ void file::menuDecompressHuffman(HWND hwnd)
 
 void menuInfo(HWND hTextbox) {
 	
-	std::ifstream info(INFO_ID);
+	std::ifstream info("info.txt");
 	std::string chain, buffer;
 	if (!info)
 		MessageBox(hTextbox, L"File opening failure. Check directory.", L"Error", MB_ICONERROR);

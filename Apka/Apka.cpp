@@ -14,7 +14,7 @@ HWND mainWnd, hTextbox;
 MSG message;
 HMENU hMenu;
 LPTSTR defPath;// \Projekt_JiPP\Apka\ //
-unsigned int quality = 50;
+double quality;
 
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam);
@@ -68,7 +68,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	SetCurrentDirectory(defPath);
 	switch (msg) {
-	case WM_COMMAND: //TODO, wyjątki, funkcje w menu.hpp
+	case WM_COMMAND:
 		switch (LOWORD(wParam)){//menu
 		case MENU_FILE_SAVE:
 			file::menuSaveFile(hTextbox);
@@ -93,7 +93,7 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 			ShowWindow(hTextbox, SW_SHOW);
 			file::menuDecompressHuffman(hwnd);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
-		case MENU_JPEG://!!!!!!!!!!!!!!11111111111!!!!!!!!!11!!!1!!1!1111111111111!!11!!!!111!1!!!!!!!!!!!!!1111!11111!!!111!!!!!1!1!!!!
+		case MENU_JPEG:
 			DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(DIALOG_TITLE), hwnd, (DLGPROC)jpegDlgProc);
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		case MENU_INFO:	
@@ -122,7 +122,6 @@ BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_COMMAND:
 	{
-		// reakcja na przyciski
 		switch (LOWORD(wParam))
 		{
 		case QUALITY_25:
@@ -182,9 +181,13 @@ BOOL CALLBACK jpegDlgProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		case DIALOG_COMPRESS:
+			if (quality != 25 && quality != 50 && quality != 75 && quality != 95)
+				quality = 50;
 			rysuj_8x8(hwnd, quality);
 			break;
 		case DIALOG_SHOW_EXAMPLE:
+			if (quality != 25 && quality != 50 && quality != 75 && quality != 95)
+				quality = 50;
 			rysuj_przyklad(hwnd, quality);
 			break;
 		case WM_DESTROY:

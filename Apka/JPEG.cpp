@@ -23,10 +23,10 @@ void save_vector(const std::vector<T> &table, const std::string &desc, std::ofst
 	file << std::endl << std::endl;
 }
 
-void create_quan_table(unsigned int quality, std::vector<std::vector<int>> &quantization_table){
+void create_quan_table(double quality, std::vector<std::vector<int>> &quantization_table){
 	double ratio;
 	if (quality > 50)
-		ratio = 2 - double(quality / 50);
+		ratio = double(2 - quality / 50);
 	else
 		ratio = double(50 / quality);
 	for (int i = 0; i < 8; i++){
